@@ -40,6 +40,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             telegramBot.OnCallbackQuery += CallbackQueryHandler;
             Console.WriteLine("Starting Bot...");
             telegramBot.StartReceiving();
+            Console.WriteLine("All fine, bot running...");
             while (true) { }
             //Console.WriteLine("Bot Started!\nPress return to stop it.");
             //Console.ReadLine();
