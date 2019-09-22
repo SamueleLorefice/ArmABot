@@ -11,8 +11,9 @@ namespace ArmA_Bot {
         public DbSet<Vote> VoteTable { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            //"Server=(localdb)\MSSQLLocalDB;Database=ArmAHelperBot;Trusted_Connection=True;"
-            optionsBuilder.UseSqlServer(Program.ConnectionString);
+            //MSSQL = "Server=(localdb)\MSSQLLocalDB;Database=ArmAHelperBot;Trusted_Connection=True;"
+            //MySQL/MAriaDB = "Server=localhost;Database=ArmABot;Uid=root;Pwd=root;"
+            optionsBuilder.UseMySql(Program.ConnectionString);
         }
 
         public bool TestConnection() {
