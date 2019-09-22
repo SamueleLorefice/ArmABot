@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ArmA_Bot.Migrations
 {
-    public partial class Main : Migration
+    public partial class RebuiltDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,9 +13,9 @@ namespace ArmA_Bot.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<decimal>(nullable: false),
-                    GroupId = table.Column<decimal>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<long>(nullable: false),
+                    GroupId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -27,10 +27,10 @@ namespace ArmA_Bot.Migrations
                 columns: table => new
                 {
                     PollId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     MessageId = table.Column<long>(nullable: false),
-                    UserId = table.Column<decimal>(nullable: false),
-                    GroupId = table.Column<decimal>(nullable: false),
+                    UserId = table.Column<long>(nullable: false),
+                    GroupId = table.Column<long>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     EventDate = table.Column<DateTime>(nullable: false),
                     EventQuota = table.Column<int>(nullable: false)
@@ -45,8 +45,8 @@ namespace ArmA_Bot.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<decimal>(nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<long>(nullable: false),
                     Username = table.Column<string>(nullable: true),
                     Choice = table.Column<int>(nullable: false),
                     PollId = table.Column<int>(nullable: false)

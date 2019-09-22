@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using ArmA_Bot.DBTables;
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 
 namespace ArmA_Bot {
 
@@ -13,7 +15,7 @@ namespace ArmA_Bot {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             //MSSQL = "Server=(localdb)\MSSQLLocalDB;Database=ArmAHelperBot;Trusted_Connection=True;"
             //MySQL/MAriaDB = "Server=localhost;Database=ArmABot;Uid=root;Pwd=root;"
-            optionsBuilder.UseMySql(Program.ConnectionString);
+            optionsBuilder.UseMySql("Server=192.168.1.15;Database=ArmABot;Uid=armabot;Pwd=*x1ServArma*;");
         }
 
         public bool TestConnection() {
@@ -21,8 +23,13 @@ namespace ArmA_Bot {
         }
 
         public void AddAdmin(Admin admin) {
-            AdminTable.Add(admin);
-            SaveChanges();
+            try {
+                AdminTable.Add(admin);
+                SaveChanges();
+            }catch (MySqlException e) when (e.Message == "Field 'Id' doesn't have a default value") {
+                Console.WriteLine("Write to the database is not possible, disable Strict SQL mode");
+            }
+
         }
 
         public int AddPoll(Poll poll) {
@@ -31,13 +38,13 @@ namespace ArmA_Bot {
             return poll.PollId;
         }
 
-        public void AddVote(EVote choice, int pollId, ulong userId, string username) {
+        public void AddVote(EVote choice, int pollId, long userId, string username) {
             var vote = new Vote { Choice = choice, UserId = userId, PollId = pollId, Username = username };
             VoteTable.Add(vote);
             SaveChanges();
         }
 
-        public Admin FindAdmin(ulong userId, ulong ChatId) {
+        public Admin FindAdmin(long userId, long ChatId) {
             return AdminTable.Where(x => x.UserId == userId && x.GroupId == ChatId).FirstOrDefault();
         }
 
@@ -45,7 +52,7 @@ namespace ArmA_Bot {
             return PollTable.Where(x => x.PollId == pollId).FirstOrDefault();
         }
 
-        public IEnumerable<Poll> GetPollsBy(ulong userId, ulong groupId) {
+        public IEnumerable<Poll> GetPollsBy(long userId, long groupId) {
             return PollTable.Where(x => x.UserId == userId && x.GroupId == groupId);
         }
 
@@ -53,7 +60,7 @@ namespace ArmA_Bot {
             return VoteTable.Where(x => x.PollId == pollId);
         }
 
-        public IEnumerable<Vote> GetVotesInPollFrom(ulong userId, int pollId) {
+        public IEnumerable<Vote> GetVotesInPollFrom(long userId, int pollId) {
             return VoteTable.Where(x => x.PollId == pollId && x.UserId == userId);
         }
 
@@ -65,7 +72,12 @@ namespace ArmA_Bot {
 
         public void UpdatePollMessageId(int pollId, long messageId) {
             var edit = PollTable.Find(pollId);
-            edit.MessageId = messageId;
+            if (edit != null) {
+                edit.MessageId = messageId;
+            } else {
+                throw new NullReferenceException("Poll could not be found");
+            }
+            
             SaveChanges();
         }
 
@@ -74,7 +86,7 @@ namespace ArmA_Bot {
             SaveChanges();
         }
 
-        public void RemoveAdmin(ulong Id) {
+        public void RemoveAdmin(long Id) {
             var admin = AdminTable.Where(x => x.UserId == Id).ToList();
             AdminTable.RemoveRange(admin);
             SaveChanges();

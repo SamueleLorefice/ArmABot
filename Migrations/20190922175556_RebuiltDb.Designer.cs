@@ -3,14 +3,16 @@ using System;
 using ArmA_Bot;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ArmA_Bot.Migrations
 {
     [DbContext(typeof(DBManager))]
-    partial class DBManagerModelSnapshot : ModelSnapshot
+    [Migration("20190922175556_RebuiltDb")]
+    partial class RebuiltDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

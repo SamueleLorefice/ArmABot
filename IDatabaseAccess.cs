@@ -8,18 +8,18 @@ namespace ArmA_Bot {
         //Admin section
         void AddAdmin(Admin admin);
 
-        Admin FindAdmin(ulong id, ulong groupId);
+        Admin FindAdmin(long id, long groupId);
 
         void RemoveAdmin(Admin admin);
 
-        void RemoveAdmin(ulong id);
+        void RemoveAdmin(long id);
 
         //Poll Section
         int AddPoll(Poll poll);
 
         Poll GetPoll(int pollId);
 
-        IEnumerable<Poll> GetPollsBy(ulong adminId, ulong groupId);
+        IEnumerable<Poll> GetPollsBy(long adminId, long groupId);
 
         void UpdatePollMessageId(int pollId, long messageId);
 
@@ -28,13 +28,13 @@ namespace ArmA_Bot {
         void RemovePoll(Poll poll);
 
         //Vote section
-        void AddVote(EVote choice, int pollId, ulong userId, string username);
+        void AddVote(EVote choice, int pollId, long userId, string username);
 
         void RemoveVote(int id);
 
         IEnumerable<Vote> GetVotesInPoll(int pollId);
 
-        IEnumerable<Vote> GetVotesInPollFrom(ulong userId, int pollId);
+        IEnumerable<Vote> GetVotesInPollFrom(long userId, int pollId);
 
         void EditVote(int voteId, EVote choice);
     }

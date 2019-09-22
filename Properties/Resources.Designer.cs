@@ -59,14 +59,5 @@ namespace ArmA_Bot.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Cerca una stringa localizzata simile a 827786455:AAGX9pjIUktUr4SEPHl0fVyI4D0UCXOwCTM.
-        /// </summary>
-        internal static string BotToken {
-            get {
-                return ResourceManager.GetString("BotToken", resourceCulture);
-            }
-        }
     }
 }
