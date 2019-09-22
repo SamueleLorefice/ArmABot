@@ -28,6 +28,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             Console.WriteLine("Initializing Database Manager...");
             ConnectionString = args[1];
             DBManager = new DBManager();
+            //TODO: handle an eventual database down
             DBManager.TestConnection();
             Console.WriteLine("Initializing bot...");
             telegramBot = new TelegramBotClient(args[0]);
@@ -40,9 +41,9 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             Console.WriteLine("Starting Bot...");
             telegramBot.StartReceiving();
             Console.WriteLine("Bot Started!\nPress return to stop it.");
-            Console.ReadLine();
-            telegramBot.StopReceiving();
-            Console.WriteLine("Bot Stopped!");
+            //Console.ReadLine();
+            //telegramBot.StopReceiving();
+            //Console.WriteLine("Bot Stopped!");
         }
         private static void CallbackQueryHandler(object sender, CallbackQueryEventArgs e) {
             var senderId = e.CallbackQuery.From.Id;
