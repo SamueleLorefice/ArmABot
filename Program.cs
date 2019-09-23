@@ -10,7 +10,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Poll = ArmA_Bot.DBTables.Poll;
 using Telegram.Bot.Types.Enums;
-using File = System.IO.File;
+using System.Threading;
 
 namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quota is reached
 
@@ -41,7 +41,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             Console.WriteLine("Starting Bot...");
             telegramBot.StartReceiving();
             Console.WriteLine("All fine, bot running...");
-            while (true) { }
+            Thread.Sleep(Timeout.Infinite);
             //Console.WriteLine("Bot Started!\nPress return to stop it.");
             //Console.ReadLine();
             //telegramBot.StopReceiving();
