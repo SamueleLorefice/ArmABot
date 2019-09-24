@@ -26,10 +26,9 @@ namespace ArmA_Bot {
             try {
                 AdminTable.Add(admin);
                 SaveChanges();
-            }catch (MySqlException e) when (e.Message == "Field 'Id' doesn't have a default value") {
+            } catch (MySqlException e) when (e.Message == "Field 'Id' doesn't have a default value") {
                 Console.WriteLine("Write to the database is not possible, disable Strict SQL mode");
             }
-
         }
 
         public int AddPoll(Poll poll) {
@@ -77,7 +76,7 @@ namespace ArmA_Bot {
             } else {
                 throw new NullReferenceException("Poll could not be found");
             }
-            
+
             SaveChanges();
         }
 

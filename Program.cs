@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using ArmA_Bot.DBTables;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Poll = ArmA_Bot.DBTables.Poll;
-using Telegram.Bot.Types.Enums;
-using System.Threading;
 
 namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quota is reached
 
@@ -18,6 +18,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
         private static DBManager DBManager;
         private static TelegramBotClient telegramBot;
         public static string ConnectionString;
+
         private static void Main(string[] args) {
             if (args.Length < 2) {
                 Console.WriteLine("Missing arguments.");
@@ -28,7 +29,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             Console.WriteLine("Initializing Database Manager...");
             ConnectionString = args[1];
             DBManager = new DBManager();
-            //TODO: handle an eventual database down
+            //TODO: handle an eventual down database situation
             DBManager.TestConnection();
             Console.WriteLine("Initializing bot...");
             telegramBot = new TelegramBotClient(args[0]);
@@ -42,11 +43,8 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             telegramBot.StartReceiving();
             Console.WriteLine("All fine, bot running...");
             Thread.Sleep(Timeout.Infinite);
-            //Console.WriteLine("Bot Started!\nPress return to stop it.");
-            //Console.ReadLine();
-            //telegramBot.StopReceiving();
-            //Console.WriteLine("Bot Stopped!");
         }
+
         private static void CallbackQueryHandler(object sender, CallbackQueryEventArgs e) {
             var senderId = e.CallbackQuery.From.Id;
             DecodeInlineQuery(e.CallbackQuery.Data, out EVote choice, out var chatId, out var pollId);
@@ -127,7 +125,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             }
             if (e.Message.Text.ToLower().Contains("/polls")) {
                 var admin = DBManager.FindAdmin((long)e.Message.From.Id, (long)e.Message.Chat.Id);
-                if(admin != null) {
+                if (admin != null) {
                     var polls = DBManager.GetPollsBy((long)admin.UserId, admin.GroupId).ToArray();
                     var Buttons = new List<List<KeyboardButton>>();
                     foreach (var poll in polls) {
@@ -149,7 +147,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                 var id = int.Parse(Regex.Match(e.Message.Text, @"ID([0-9]+)").Groups[1].Value);
                 var rmId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Ignore.", replyMarkup: new ReplyKeyboardRemove());
                 telegramBot.DeleteMessageAsync(new ChatId(e.Message.Chat.Id), rmId.Result.MessageId);
-                var MsgId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");                
+                var MsgId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
                 try {
                     DBManager.UpdatePollMessageId(id, MsgId.Result.MessageId);
                     var poll = DBManager.GetPoll(id);
@@ -188,17 +186,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             var BtnForse = new InlineKeyboardButton() { Text = "Forse", CallbackData = String.Format("3 {0} {1}", chatId, pollId) };
             var BtnAssente = new InlineKeyboardButton() { Text = "Assente", CallbackData = String.Format("2 {0} {1}", chatId, pollId) };
 
-            var RowPresente = new List<InlineKeyboardButton> {
-                BtnPresente
-            };
+            var RowPresente = new List<InlineKeyboardButton> { BtnPresente };
 
-            var RowForse = new List<InlineKeyboardButton> {
-                BtnForse
-            };
+            var RowForse = new List<InlineKeyboardButton> { BtnForse };
 
-            var RowAssente = new List<InlineKeyboardButton> {
-                BtnAssente
-            };
+            var RowAssente = new List<InlineKeyboardButton> { BtnAssente };
 
             var ReplyKB = new List<List<InlineKeyboardButton>> {
                 RowPresente,
