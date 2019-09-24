@@ -1,9 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ArmA_Bot.DBTables {
+﻿namespace ArmA_Bot.DBTables {
 
     public class Vote {
-
         public int Id { get; set; }
         public long UserId { get; set; }
         public string Username { get; set; }

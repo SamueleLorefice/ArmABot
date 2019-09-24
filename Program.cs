@@ -28,7 +28,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             Console.WriteLine("Initializing Database Manager...");
             ConnectionString = args[1];
             DBManager = new DBManager();
-            //TODO: handle an eventual database down
+            //TODO: handle an eventual down database situation
             DBManager.TestConnection();
             Console.WriteLine("Initializing bot...");
             telegramBot = new TelegramBotClient(args[0]);
@@ -42,10 +42,6 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             telegramBot.StartReceiving();
             Console.WriteLine("All fine, bot running...");
             Thread.Sleep(Timeout.Infinite);
-            //Console.WriteLine("Bot Started!\nPress return to stop it.");
-            //Console.ReadLine();
-            //telegramBot.StopReceiving();
-            //Console.WriteLine("Bot Stopped!");
         }
         private static void CallbackQueryHandler(object sender, CallbackQueryEventArgs e) {
             var senderId = e.CallbackQuery.From.Id;
@@ -188,17 +184,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             var BtnForse = new InlineKeyboardButton() { Text = "Forse", CallbackData = String.Format("3 {0} {1}", chatId, pollId) };
             var BtnAssente = new InlineKeyboardButton() { Text = "Assente", CallbackData = String.Format("2 {0} {1}", chatId, pollId) };
 
-            var RowPresente = new List<InlineKeyboardButton> {
-                BtnPresente
-            };
+            var RowPresente = new List<InlineKeyboardButton> { BtnPresente };
 
-            var RowForse = new List<InlineKeyboardButton> {
-                BtnForse
-            };
+            var RowForse = new List<InlineKeyboardButton> { BtnForse };
 
-            var RowAssente = new List<InlineKeyboardButton> {
-                BtnAssente
-            };
+            var RowAssente = new List<InlineKeyboardButton> { BtnAssente };
 
             var ReplyKB = new List<List<InlineKeyboardButton>> {
                 RowPresente,
