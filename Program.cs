@@ -162,19 +162,20 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
         private static string GetText(int pollId) {
             var text = "<b>📰";
             var poll = DBManager.GetPoll(pollId);
-            text += poll.Title + "\n————————————————————\n" + $"{poll.EventDate.ToString()}\n" + "\n✅Presenti:</b>\n";
             var votes = DBManager.GetVotesInPoll(pollId);
             Vote[] Present = votes.Where(x => x.Choice == EVote.Present).ToArray();
             Vote[] Maybe = votes.Where(x => x.Choice == EVote.Maybe).ToArray();
             Vote[] Absent = votes.Where(x => x.Choice == EVote.Absent).ToArray();
+            text += poll.Title + $"\n————————————————————\n{poll.EventDate.ToString()}\n\n✅Presenti: {Present.Length}</b>\n";
+
             foreach (var people in Present) {
                 text += "    • " + people.Username + "\n";
             }
-            text += "<b>⚠️Forse:</b>\n";
+            text += $"<b>⚠️Forse: {Maybe.Length}</b>\n";
             foreach (var people in Maybe) {
                 text += "    • " + people.Username + "\n";
             }
-            text += "<b>❌Assente:</b>\n";
+            text += $"<b>❌Assente: {Absent.Length}</b>\n";
             foreach (var people in Absent) {
                 text += "    • " + people.Username + "\n";
             }
