@@ -166,7 +166,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             Vote[] Present = votes.Where(x => x.Choice == EVote.Present).ToArray();
             Vote[] Maybe = votes.Where(x => x.Choice == EVote.Maybe).ToArray();
             Vote[] Absent = votes.Where(x => x.Choice == EVote.Absent).ToArray();
-            text += poll.Title + $"\n————————————————————\n{poll.EventDate.ToString()}\n\n✅Presenti: {Present.Length}</b>\n";
+            text += poll.Title + $"\n————————————————————\n{poll.EventDate.Day}/{poll.EventDate.Month}/{poll.EventDate.Year} {poll.EventDate.Hour}:{poll.EventDate.Minute}\n\n✅Presenti: {Present.Length}</b>\n";
 
             foreach (var people in Present) {
                 text += "    • " + people.Username + "\n";
