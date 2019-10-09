@@ -48,7 +48,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
         private static void CallbackQueryHandler(object sender, CallbackQueryEventArgs e) {
             var senderId = e.CallbackQuery.From.Id;
             DecodeInlineQuery(e.CallbackQuery.Data, out EVote choice, out var chatId, out var pollId);
-            var poll = DBManager.GetPoll(pollId);
+            Poll poll = DBManager.GetPoll(pollId);
             var votes = DBManager.GetVotesInPollFrom(senderId, pollId).ToList();
             if (poll.EventDate < DateTime.Now) {
                 telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Questo poll è chiuso");
@@ -59,7 +59,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                     telegramBot.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
                     telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato modificato");
                 } else if (votes.Count == 0 || votes == null) {
-                    DBManager.AddVote(choice, pollId, (long)senderId, e.CallbackQuery.From.FirstName);
+                    DBManager.AddVote(choice, pollId, senderId, e.CallbackQuery.From.FirstName);
                     telegramBot.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
                     telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato aggiunto");
                 } else {
@@ -74,9 +74,9 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                 return;
             }
             if (e.Message.Text.ToLower().Contains("/addadmin")) {
-                var checkAdm = DBManager.FindAdmin((long)e.Message.From.Id, (long)e.Message.Chat.Id);
+                Admin checkAdm = DBManager.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);
                 if (checkAdm == null) {
-                    DBManager.AddAdmin(new Admin { UserId = (long)e.Message.From.Id, GroupId = (long)e.Message.Chat.Id });
+                    DBManager.AddAdmin(new Admin { UserId = e.Message.From.Id, GroupId = e.Message.Chat.Id });
                     telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Added as admin of this chat");
                 } else {
                     telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "You are already an admin of this chat");
@@ -90,11 +90,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             }
             //DATA Groups: 0 = Original message, 1 = Text, 2 = date, 3 = time, 4 = quota
             if (Regex.IsMatch(e.Message.Text.ToLower(), @"\/addevent '([\s\S]*)' ([0-9]{2}\/[0-9]{2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)")) {
-                var data = Regex.Match(e.Message.Text, @"\/addevent '([\s\S]*)' ([0-9]{2}\/[0-9]{2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)");
+                Match data = Regex.Match(e.Message.Text, @"\/addevent '([\s\S]*)' ([0-9]{2}\/[0-9]{2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)");
                 //checks if the user that has sent the command is an admin of that group
-                var admin = DBManager.FindAdmin((long)e.Message.From.Id, (long)e.Message.Chat.Id);//SUGGESTION refactor and remove uLong in favor of Long and Int?
+                Admin admin = DBManager.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);//SUGGESTION refactor and remove uLong in favor of Long and Int?
                 int pollId;
-                if (admin != null && (long)e.Message.Chat.Id == admin.GroupId) {
+                if (admin != null && e.Message.Chat.Id == admin.GroupId) {
                     var poll = new Poll() {
                         UserId = admin.UserId,
                         GroupId = admin.GroupId,
@@ -102,15 +102,15 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                         EventDate = ParseDate(data.Groups[2].Value, data.Groups[3].Value),
                         EventQuota = int.Parse(data.Groups[4].Value)
                     };
-                    var MsgId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
+                    System.Threading.Tasks.Task<Message> MsgId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
                     poll.MessageId = MsgId.Result.MessageId;
                     pollId = DBManager.AddPoll(poll);
                     InlineKeyboardMarkup markup = GetReplyMarkUp(e.Message.Chat.Id, pollId);
                     telegramBot.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), MsgId.Result.MessageId, GetText(pollId), replyMarkup: markup, parseMode: ParseMode.Html);
 #if DEBUG
                     var debugPoll = new Poll() {
-                        UserId = (long)e.Message.From.Id,
-                        GroupId = (long)e.Message.Chat.Id,
+                        UserId = e.Message.From.Id,
+                        GroupId = e.Message.Chat.Id,
                         Title = data.Groups[1].Value,
                         EventDate = ParseDate(data.Groups[2].Value, data.Groups[3].Value),
                         EventQuota = int.Parse(data.Groups[4].Value)
@@ -128,11 +128,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                 return;
             }
             if (e.Message.Text.ToLower().Contains("/polls")) {
-                var admin = DBManager.FindAdmin((long)e.Message.From.Id, (long)e.Message.Chat.Id);
+                Admin admin = DBManager.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);
                 if (admin != null) {
-                    var polls = DBManager.GetPollsBy((long)admin.UserId, admin.GroupId).ToArray();
+                    Poll[] polls = DBManager.GetPollsBy(admin.UserId, admin.GroupId).ToArray();
                     var Buttons = new List<List<KeyboardButton>>();
-                    foreach (var poll in polls) {
+                    foreach (Poll poll in polls) {
                         Buttons.Add(new List<KeyboardButton>() { new KeyboardButton($"ID{poll.PollId} {poll.Title}") });
                     }
                     var markup = new ReplyKeyboardMarkup(Buttons, oneTimeKeyboard: true) {
@@ -149,12 +149,12 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             }
             if (e.Message.Text.Contains("ID")) {
                 var id = int.Parse(Regex.Match(e.Message.Text, @"ID([0-9]+)").Groups[1].Value);
-                var rmId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Ignore.", replyMarkup: new ReplyKeyboardRemove());
+                System.Threading.Tasks.Task<Message> rmId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Ignore.", replyMarkup: new ReplyKeyboardRemove());
                 telegramBot.DeleteMessageAsync(new ChatId(e.Message.Chat.Id), rmId.Result.MessageId);
-                var MsgId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
+                System.Threading.Tasks.Task<Message> MsgId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
                 try {
                     DBManager.UpdatePollMessageId(id, MsgId.Result.MessageId);
-                    var poll = DBManager.GetPoll(id);
+                    Poll poll = DBManager.GetPoll(id);
                     InlineKeyboardMarkup markup = GetReplyMarkUp(e.Message.Chat.Id, poll.PollId);
                     telegramBot.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), (int)poll.MessageId, GetText(id), replyMarkup: markup, parseMode: ParseMode.Html);
                 } catch (NullReferenceException exc) {
@@ -165,31 +165,31 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
 
         private static string GetText(int pollId) {
             var text = "<b>📰";
-            var poll = DBManager.GetPoll(pollId);
-            var votes = DBManager.GetVotesInPoll(pollId);
+            Poll poll = DBManager.GetPoll(pollId);
+            IEnumerable<Vote> votes = DBManager.GetVotesInPoll(pollId);
             Vote[] Present = votes.Where(x => x.Choice == EVote.Present).ToArray();
             Vote[] Maybe = votes.Where(x => x.Choice == EVote.Maybe).ToArray();
             Vote[] Absent = votes.Where(x => x.Choice == EVote.Absent).ToArray();
             text += poll.Title + $"\n————————————————————\n{poll.EventDate.Day}/{poll.EventDate.Month}/{poll.EventDate.Year} {poll.EventDate.Hour}:{poll.EventDate.Minute}\n\n✅Presenti: {Present.Length}</b>\n";
 
-            foreach (var people in Present) {
+            foreach (Vote people in Present) {
                 text += "    • " + people.Username + "\n";
             }
             text += $"<b>⚠️Forse: {Maybe.Length}</b>\n";
-            foreach (var people in Maybe) {
+            foreach (Vote people in Maybe) {
                 text += "    • " + people.Username + "\n";
             }
             text += $"<b>❌Assente: {Absent.Length}</b>\n";
-            foreach (var people in Absent) {
+            foreach (Vote people in Absent) {
                 text += "    • " + people.Username + "\n";
             }
             return text;
         }
 
         private static InlineKeyboardMarkup GetReplyMarkUp(long chatId, int pollId) {
-            var BtnPresente = new InlineKeyboardButton() { Text = "Presente", CallbackData = String.Format("1 {0} {1}", chatId, pollId) };
-            var BtnForse = new InlineKeyboardButton() { Text = "Forse", CallbackData = String.Format("3 {0} {1}", chatId, pollId) };
-            var BtnAssente = new InlineKeyboardButton() { Text = "Assente", CallbackData = String.Format("2 {0} {1}", chatId, pollId) };
+            var BtnPresente = new InlineKeyboardButton() { Text = "Presente", CallbackData = string.Format("1 {0} {1}", chatId, pollId) };
+            var BtnForse = new InlineKeyboardButton() { Text = "Forse", CallbackData = string.Format("3 {0} {1}", chatId, pollId) };
+            var BtnAssente = new InlineKeyboardButton() { Text = "Assente", CallbackData = string.Format("2 {0} {1}", chatId, pollId) };
 
             var RowPresente = new List<InlineKeyboardButton> { BtnPresente };
 
