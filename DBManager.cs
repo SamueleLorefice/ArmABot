@@ -15,7 +15,7 @@ namespace ArmA_Bot {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             //MSSQL = "Server=(localdb)\MSSQLLocalDB;Database=ArmAHelperBot;Trusted_Connection=True;"
             //MySQL/MAriaDB = "Server=localhost;Database=ArmABot;Uid=root;Pwd=root;"
-            optionsBuilder.UseMySql("Server=192.168.1.15;Database=ArmABot;Uid=armabot;Pwd=*x1ServArma*;");
+            optionsBuilder.UseMySql(Program.ConnectionString);
         }
 
         public bool TestConnection() {
@@ -26,10 +26,9 @@ namespace ArmA_Bot {
             try {
                 AdminTable.Add(admin);
                 SaveChanges();
-            }catch (MySqlException e) when (e.Message == "Field 'Id' doesn't have a default value") {
+            } catch (MySqlException e) when (e.Message == "Field 'Id' doesn't have a default value") {
                 Console.WriteLine("Write to the database is not possible, disable Strict SQL mode");
             }
-
         }
 
         public int AddPoll(Poll poll) {
@@ -65,19 +64,19 @@ namespace ArmA_Bot {
         }
 
         public void EditVote(int voteId, EVote choice) {
-            var edit = VoteTable.Find(voteId);
+            Vote edit = VoteTable.Find(voteId);
             edit.Choice = choice;
             SaveChanges();
         }
 
         public void UpdatePollMessageId(int pollId, long messageId) {
-            var edit = PollTable.Find(pollId);
+            Poll edit = PollTable.Find(pollId);
             if (edit != null) {
                 edit.MessageId = messageId;
             } else {
                 throw new NullReferenceException("Poll could not be found");
             }
-            
+
             SaveChanges();
         }
 
@@ -108,7 +107,7 @@ namespace ArmA_Bot {
         }
 
         public void RemoveVote(int id) {
-            var vote = VoteTable.Where(x => x.Id == id).First();
+            Vote vote = VoteTable.Where(x => x.Id == id).First();
             VoteTable.Remove(vote);
             SaveChanges();
         }

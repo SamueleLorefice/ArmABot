@@ -2,30 +2,26 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ArmA_Bot.Migrations
-{
-    public partial class RebuiltDb : Migration
-    {
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+namespace ArmA_Bot.Migrations {
+
+    public partial class RebuiltDb : Migration {
+
+        protected override void Up(MigrationBuilder migrationBuilder) {
             migrationBuilder.CreateTable(
                 name: "AdminTable",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<long>(nullable: false),
                     GroupId = table.Column<long>(nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_AdminTable", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "PollTable",
-                columns: table => new
-                {
+                columns: table => new {
                     PollId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     MessageId = table.Column<long>(nullable: false),
@@ -35,15 +31,13 @@ namespace ArmA_Bot.Migrations
                     EventDate = table.Column<DateTime>(nullable: false),
                     EventQuota = table.Column<int>(nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_PollTable", x => x.PollId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "VoteTable",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<long>(nullable: false),
@@ -51,14 +45,12 @@ namespace ArmA_Bot.Migrations
                     Choice = table.Column<int>(nullable: false),
                     PollId = table.Column<int>(nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_VoteTable", x => x.Id);
                 });
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropTable(
                 name: "AdminTable");
 
