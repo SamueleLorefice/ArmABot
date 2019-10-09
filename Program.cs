@@ -48,20 +48,24 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
         private static void CallbackQueryHandler(object sender, CallbackQueryEventArgs e) {
             var senderId = e.CallbackQuery.From.Id;
             DecodeInlineQuery(e.CallbackQuery.Data, out EVote choice, out var chatId, out var pollId);
-            var votes = DBManager.GetVotesInPollFrom((long)senderId, pollId).ToList();
             var poll = DBManager.GetPoll(pollId);
-            if (votes.Count == 1) {
-                var id = votes[0].Id;
-                DBManager.EditVote(id, choice);
-                telegramBot.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
-                telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato modificato");
-            } else if (votes.Count == 0 || votes == null) {
-                DBManager.AddVote(choice, pollId, (long)senderId, e.CallbackQuery.From.FirstName);
-                telegramBot.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
-                telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato aggiunto");
+            var votes = DBManager.GetVotesInPollFrom(senderId, pollId).ToList();
+            if (poll.EventDate < DateTime.Now) {
+                telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Questo poll è chiuso");
             } else {
-                Console.WriteLine("ERROR: Something is wrong on the DB! There are 2 or more votes from the same user in a poll!");
-                Console.WriteLine(string.Format(" PollID: {0}\n UserID: {1}", pollId, senderId));
+                if (votes.Count == 1) {
+                    var id = votes[0].Id;
+                    DBManager.EditVote(id, choice);
+                    telegramBot.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
+                    telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato modificato");
+                } else if (votes.Count == 0 || votes == null) {
+                    DBManager.AddVote(choice, pollId, (long)senderId, e.CallbackQuery.From.FirstName);
+                    telegramBot.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
+                    telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato aggiunto");
+                } else {
+                    Console.WriteLine("ERROR: Something is wrong on the DB! There are 2 or more votes from the same user in a poll!");
+                    Console.WriteLine(string.Format(" PollID: {0}\n UserID: {1}", pollId, senderId));
+                }
             }
         }
 
