@@ -187,22 +187,23 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
         }
 
         private static string GetText(int pollId) {
-            var text = "<b>📰";
+
             Poll poll = DBManager.GetPoll(pollId);
             IEnumerable<Vote> votes = DBManager.GetVotesInPoll(pollId);
             Vote[] Present = votes.Where(x => x.Choice == EVote.Present).ToArray();
             Vote[] Maybe = votes.Where(x => x.Choice == EVote.Maybe).ToArray();
             Vote[] Absent = votes.Where(x => x.Choice == EVote.Absent).ToArray();
-            text += poll.Title + $"\n————————————————————\n{poll.EventDate.Day}/{poll.EventDate.Month}/{poll.EventDate.Year} {poll.EventDate.Hour}:{poll.EventDate.Minute}\n\n✅Presenti: {Present.Length}</b>\n";
+            var text = "<b>📰";
+            text += poll.Title + $"\n————————————————————\n{poll.EventDate.Day}/{poll.EventDate.Month}/{poll.EventDate.Year} {poll.EventDate.Hour}:{poll.EventDate.Minute}\n\n✅ Presenti: {Present.Length}</b>\n";
 
             foreach (Vote people in Present) {
                 text += "    • " + people.Username + "\n";
             }
-            text += $"<b>⚠️Forse: {Maybe.Length}</b>\n";
+            text += $"\n<b>⚠️ Forse: {Maybe.Length}</b>\n";
             foreach (Vote people in Maybe) {
                 text += "    • " + people.Username + "\n";
             }
-            text += $"<b>❌Assente: {Absent.Length}</b>\n";
+            text += $"\n<b>❌ Assente: {Absent.Length}</b>\n";
             foreach (Vote people in Absent) {
                 text += "    • " + people.Username + "\n";
             }
