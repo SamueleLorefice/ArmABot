@@ -29,10 +29,10 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                 var env = (Dictionary<string, string>)Environment.GetEnvironmentVariables();
                 foreach (var keyPair in env) {
                     switch (keyPair.Key) {
-                        case "BotToken":
+                        case "BOT_TOKEN":
                             token = keyPair.Value;
                             break;
-                        case "DBAddress":
+                        case "CONNECTION_STRING":
                             ConnectionString = keyPair.Value;
                             break;
                         default:
