@@ -4,6 +4,8 @@ services:
   app:
     aliases: 'ArmABot'
     build: .
+    environment: BotToken
+    environment: DBAddress
 
   database:
     image: "mariadb"
