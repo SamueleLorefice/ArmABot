@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  app:
+    aliases: 'ArmABot'
+    build: .
+
+  database:
+    image: "mariadb"
+    environment: 
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: ArmABot
+      MYSQL_USER: ArmaBot
+      MYSQL_PASSWORD: test
