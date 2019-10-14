@@ -114,8 +114,8 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                 return;
             }
             //DATA Groups: 0 = Original message, 1 = Text, 2 = date, 3 = time, 4 = quota
-            if (Regex.IsMatch(e.Message.Text, @"\/addevent '([\s\S]*)' ([0-9]{2}\/[0-9]{2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)", RegexOptions.IgnoreCase)) {
-                var data = Regex.Match(e.Message.Text, @"\/addevent '([\s\S]*)' ([0-9]{2}\/[0-9]{2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)", RegexOptions.IgnoreCase);
+            if (Regex.IsMatch(e.Message.Text, @"\/addevent[\S]* '([\s\S]*)' ([0-9]{2}\/[0-9]{2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)", RegexOptions.IgnoreCase)) {
+                var data = Regex.Match(e.Message.Text, @"\/addevent[\S]* '([\s\S]*)' ([0-9]{2}\/[0-9]{2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)", RegexOptions.IgnoreCase);
                 Admin admin = DBManager.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);//checks if the user that has sent the command is an admin of that group
                 int pollId;
                 if (admin != null && e.Message.Chat.Id == admin.GroupId) {
