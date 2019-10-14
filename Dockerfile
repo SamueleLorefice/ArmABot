@@ -14,7 +14,7 @@ RUN dotnet publish "ArmA Bot.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-ENV BotToken='BotToken'
-ENV DBAddress='Connection string'
+ENV BotToken='BOT_TOKEN'
+ENV DBAddress='CONNECTION_STRING'
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ArmA Bot.dll"]
