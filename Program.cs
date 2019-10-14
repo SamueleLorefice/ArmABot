@@ -40,7 +40,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             telegramBot.OnMessage += ResendPollHandler;
             telegramBot.OnCallbackQuery += CallbackQueryHandler;
             Console.WriteLine("Starting Bot...");
-            telegramBot.StartReceiving();
+            telegramBot.StartReceiving(new UpdateType[] { UpdateType.CallbackQuery, UpdateType.Message});
             Console.WriteLine("All fine, bot running...");
             Thread.Sleep(Timeout.Infinite);
         }
@@ -89,8 +89,8 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                 return;
             }
             //DATA Groups: 0 = Original message, 1 = Text, 2 = date, 3 = time, 4 = quota
-            if (Regex.IsMatch(e.Message.Text.ToLower(), @"\/addevent '([\s\S]*)' ([0-9]{2}\/[0-9]{2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)")) {
-                Match data = Regex.Match(e.Message.Text, @"\/addevent '([\s\S]*)' ([0-9]{2}\/[0-9]{2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)");
+            if (Regex.IsMatch(e.Message.Text, @"\/addevent '([\s\S]*)' ([0-9]{2}\/[0-9]{2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)", RegexOptions.IgnoreCase)) {
+                var data = Regex.Match(e.Message.Text, @"\/addevent '([\s\S]*)' ([0-9]{2}\/[0-9]{2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)", RegexOptions.IgnoreCase);
                 //checks if the user that has sent the command is an admin of that group
                 Admin admin = DBManager.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);//SUGGESTION refactor and remove uLong in favor of Long and Int?
                 int pollId;
@@ -171,7 +171,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             Vote[] Maybe = votes.Where(x => x.Choice == EVote.Maybe).ToArray();
             Vote[] Absent = votes.Where(x => x.Choice == EVote.Absent).ToArray();
             var text = "<b>📰";
-            text += poll.Title + $"\n————————————————————\n{poll.EventDate.Day}/{poll.EventDate.Month}/{poll.EventDate.Year} {poll.EventDate.Hour}:{poll.EventDate.Minute}\n\n✅ Presenti: {Present.Length}</b>\n";
+            text += poll.Title + $"\n————————————————————\n{poll.EventDate.Day:D2}/{poll.EventDate.Month:D2}/{poll.EventDate.Year:D4} {poll.EventDate.Hour:D2}:{poll.EventDate.Minute:D2}\n\n✅Presenti: {Present.Length}</b>\n";
 
             foreach (Vote people in Present) {
                 text += "    • " + people.Username + "\n";
