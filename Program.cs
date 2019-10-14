@@ -26,21 +26,22 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                 Console.WriteLine("Missing arguments.");
                 Console.WriteLine("BotToken ConnectionString");
                 Console.WriteLine("Trying enviroment variables");
-                var env = (Dictionary<string, string>)Environment.GetEnvironmentVariables();
-                foreach (var keyPair in env) {
-                    switch (keyPair.Key) {
+                var env = (Hashtable)Environment.GetEnvironmentVariables();
+                
+                foreach (DictionaryEntry envVar in env) {
+                    switch (envVar.Key.ToString()) {
                         case "BOT_TOKEN":
-                            token = keyPair.Value;
+                            token = envVar.Value.ToString();
                             break;
                         case "CONNECTION_STRING":
-                            ConnectionString = keyPair.Value;
+                            ConnectionString = envVar.Value.ToString();
                             break;
                         default:
                             break;
                     }
                 }
                 if (token == "0" || ConnectionString == null) {
-                    Console.WriteLine("Please start the bot using command line arguments <Token> <ConnectionString> or set up \"BotToken\" and \"DBAddress\" enviroment variables.");
+                    Console.WriteLine("Please start the bot using command line arguments <Token> <ConnectionString> or set up \"BOT_TOKEN\" and \"CONNECTION_STRING\" enviroment variables.");
                     env.Add("BotToken", "0");
                     env.Add("DBAddress", "");
                     return;
