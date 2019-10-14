@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -20,19 +21,42 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
         public static string ConnectionString;
 
         private static void Main(string[] args) {
+            string token = "0";
             if (args.Length < 2) {
                 Console.WriteLine("Missing arguments.");
                 Console.WriteLine("BotToken ConnectionString");
-                return;
+                Console.WriteLine("Trying enviroment variables");
+                var env = (Hashtable)Environment.GetEnvironmentVariables();
+                
+                foreach (DictionaryEntry envVar in env) {
+                    switch (envVar.Key.ToString()) {
+                        case "BOT_TOKEN":
+                            token = envVar.Value.ToString();
+                            break;
+                        case "CONNECTION_STRING":
+                            ConnectionString = envVar.Value.ToString();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (token == "0" || ConnectionString == null) {
+                    Console.WriteLine("Please start the bot using command line arguments <Token> <ConnectionString> or set up \"BOT_TOKEN\" and \"CONNECTION_STRING\" enviroment variables.");
+                    env.Add("BotToken", "0");
+                    env.Add("DBAddress", "");
+                    return;
+                }
+            } else {
+                token = args[0];
+                ConnectionString = args[1];
             }
             Console.WriteLine("ArmA Helper Bot V{0}", Assembly.GetExecutingAssembly().GetName().Version);
             Console.WriteLine("Initializing Database Manager...");
-            ConnectionString = args[1];
             DBManager = new DBManager();
             //TODO: handle an eventual down database situation
             DBManager.TestConnection();
             Console.WriteLine("Initializing bot...");
-            telegramBot = new TelegramBotClient(args[0]);
+            telegramBot = new TelegramBotClient(token);
             Console.WriteLine("Registering Callbacks...");
             telegramBot.OnMessage += AddEventHandler;
             telegramBot.OnMessage += AddAdminHandler;
