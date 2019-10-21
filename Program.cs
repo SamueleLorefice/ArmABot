@@ -206,6 +206,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             foreach (Vote people in Absent) {
                 text += "    • " + people.Username + "\n";
             }
+            text += $"\n<b>Slot Minimi:</b> {Present.Length} + ({Maybe.Length}) / {poll.EventQuota}";
             return text;
         }
 
