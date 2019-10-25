@@ -55,7 +55,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             Console.WriteLine("Initializing Database Manager...");
             DBManager = new DBManager();
             //TODO: handle an eventual down database situation
-            DBManager.TestConnection();
+            Console.WriteLine($"Database connection = {DBManager.TestConnection()}");
             Console.WriteLine("Initializing bot...");
             telegramBot = new TelegramBotClient(token);
             Console.WriteLine("Registering Callbacks...");
@@ -77,6 +77,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             var votes = DBManager.GetVotesInPollFrom(senderId, pollId).ToList();
             if (poll.EventDate < DateTime.Now) {
                 telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Questo poll è chiuso");
+                telegramBot.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: null, parseMode: ParseMode.Html);
             } else {
                 if (votes.Count == 1) {
                     var id = votes[0].Id;
@@ -88,8 +89,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                     telegramBot.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
                     telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato aggiunto");
                 } else {
+                    Console.WriteLine("DATABASE ERROR. Run with debug build to see more informations...");
+#if DEBUG
                     Console.WriteLine("ERROR: Something is wrong on the DB! There are 2 or more votes from the same user in a poll!");
                     Console.WriteLine(string.Format(" PollID: {0}\n UserID: {1}", pollId, senderId));
+#endif
                 }
             }
         }
@@ -189,12 +193,17 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
 
         private static string GetText(int pollId) {
             Poll poll = DBManager.GetPoll(pollId);
-            IEnumerable<Vote> votes = DBManager.GetVotesInPoll(pollId);
+            bool closed = poll.EventDate < DateTime.Now;
+            IEnumerable <Vote> votes = DBManager.GetVotesInPoll(pollId);
             Vote[] Present = votes.Where(x => x.Choice == EVote.Present).ToArray();
             Vote[] Maybe = votes.Where(x => x.Choice == EVote.Maybe).ToArray();
             Vote[] Absent = votes.Where(x => x.Choice == EVote.Absent).ToArray();
             var text = "<b>📰";
-            text += poll.Title + $"\n————————————————————\n{poll.EventDate.Day:D2}/{poll.EventDate.Month:D2}/{poll.EventDate.Year:D4} {poll.EventDate.Hour:D2}:{poll.EventDate.Minute:D2}\n\n✅Presenti: {Present.Length}</b>\n";
+            if (closed) {
+                text += poll.Title + $"\n————————————————————\n<b>POLL CHIUSO</b>\n{poll.EventDate.Day:D2}/{poll.EventDate.Month:D2}/{poll.EventDate.Year:D4} {poll.EventDate.Hour:D2}:{poll.EventDate.Minute:D2}\n\n✅Presenti: {Present.Length}</b>\n";
+            } else {
+                text += poll.Title + $"\n————————————————————\n{poll.EventDate.Day:D2}/{poll.EventDate.Month:D2}/{poll.EventDate.Year:D4} {poll.EventDate.Hour:D2}:{poll.EventDate.Minute:D2}\n\n✅Presenti: {Present.Length}</b>\n";
+            }
             foreach (Vote people in Present) {
                 text += "    • " + people.Username + "\n";
             }
@@ -206,7 +215,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             foreach (Vote people in Absent) {
                 text += "    • " + people.Username + "\n";
             }
-            text += $"\n<b>Slot Minimi:</b> {Present.Length} + ({Maybe.Length}) / {poll.EventQuota}";
+            if (!closed) {
+                text += $"\n<b>Slot Minimi:</b> {Present.Length} + ({Maybe.Length}) / {poll.EventQuota}";
+            } else {
+                text += $"\n<b>Partecipanti: {Present.Length} + ?{Maybe.Length}/{poll.EventQuota} minimi."
+            }
             return text;
         }
 
