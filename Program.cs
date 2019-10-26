@@ -218,7 +218,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             if (!closed) {
                 text += $"\n<b>Slot Minimi:</b> {Present.Length} + ({Maybe.Length}) / {poll.EventQuota}";
             } else {
-                text += $"\n<b>Partecipanti: {Present.Length} + ?{Maybe.Length}/{poll.EventQuota} minimi."
+                text += $"\n<b>Partecipanti: {Present.Length} + ?{Maybe.Length}/{poll.EventQuota} minimi.";
             }
             return text;
         }
