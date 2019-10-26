@@ -64,13 +64,13 @@ namespace ArmA_Bot {
         }
 
         public void EditVote(int voteId, EVote choice) {
-            var edit = VoteTable.Find(voteId);
+            Vote edit = VoteTable.Find(voteId);
             edit.Choice = choice;
             SaveChanges();
         }
 
         public void UpdatePollMessageId(int pollId, long messageId) {
-            var edit = PollTable.Find(pollId);
+            Poll edit = PollTable.Find(pollId);
             if (edit != null) {
                 edit.MessageId = messageId;
             } else {
@@ -107,9 +107,18 @@ namespace ArmA_Bot {
         }
 
         public void RemoveVote(int id) {
-            var vote = VoteTable.Where(x => x.Id == id).First();
+            Vote vote = VoteTable.Where(x => x.Id == id).First();
             VoteTable.Remove(vote);
             SaveChanges();
+        }
+
+        public override int SaveChanges() {
+            try {
+                base.SaveChanges();
+            } catch (MySqlException e) {
+                return 1;
+            }
+            return 0;
         }
     }
 }
