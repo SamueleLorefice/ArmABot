@@ -111,5 +111,14 @@ namespace ArmA_Bot {
             VoteTable.Remove(vote);
             SaveChanges();
         }
+
+        public override int SaveChanges() {
+            try {
+                base.SaveChanges();
+            } catch (MySqlException e) {
+                return 1;
+            }
+            return 0;
+        }
     }
 }
