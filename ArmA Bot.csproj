@@ -5,16 +5,19 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>ArmA_Bot</RootNamespace>
     <StartupObject>ArmA_Bot.Program</StartupObject>
-    <Version>0.0.1.0</Version>
+    <Version>1.0.1.0</Version>
     <Company>R3D Tech</Company>
     <Authors>RED CODE</Authors>
     <PackageId>ArmABot</PackageId>
-    <AssemblyVersion>0.0.1.*</AssemblyVersion>
-    <FileVersion>0.0.1.*</FileVersion>
+    <AssemblyVersion>1.0.1.*</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
     <Deterministic>False</Deterministic>
+    <RepositoryUrl>https://github.com/SamueleLorefice/ArmABot</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>release1.0.1</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
