@@ -1,6 +1,6 @@
 ArmA Bot
 
-A bot for making polls for organizing Arma operations. 
+A bot for making polls while organizing Arma operations. 
 
 - Docker compatible
 - Can be run by setting 2 enviroment variables: `BOT_TOKEN` and `CONNECTION_STRING`
