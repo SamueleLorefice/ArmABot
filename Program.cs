@@ -177,7 +177,7 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             }
             if (e.Message.Text.Contains("ID")) {
                 var id = int.Parse(Regex.Match(e.Message.Text, @"ID([0-9]+)").Groups[1].Value);
-                System.Threading.Tasks.Task<Message> rmId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Ignore.", replyMarkup: new ReplyKeyboardRemove());
+                System.Threading.Tasks.Task<Message> rmId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll.", replyMarkup: new ReplyKeyboardRemove());
                 telegramBot.DeleteMessageAsync(new ChatId(e.Message.Chat.Id), rmId.Result.MessageId);
                 System.Threading.Tasks.Task<Message> MsgId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
                 try {
