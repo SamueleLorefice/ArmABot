@@ -148,6 +148,8 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                         string.Format("TITLE {0}\nUserID {1}\nGroupID {2}\nDATETIME {3}\nQUOTA {4}", debugPoll.Title, debugPoll.UserId, debugPoll.GroupId, debugPoll.EventDate, debugPoll.EventQuota));
 #endif
                 }
+            }else if (e.Message.Text.ToLower().StartsWith("/addevent")) {
+                telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Wrong syntax. use: /addevent '<title>' <date> <time> +<minium number of partecipants>");
             }
         }
 
