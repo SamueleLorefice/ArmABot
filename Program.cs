@@ -122,31 +122,35 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
                 var data = Regex.Match(e.Message.Text, @"\/addevent[\S]* '([\s\S]*)' ([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)", RegexOptions.IgnoreCase);
                 Admin admin = DBManager.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);//checks if the user that has sent the command is an admin of that group
                 int pollId;
-                if (admin != null && e.Message.Chat.Id == admin.GroupId) {
-                    var poll = new Poll() {
-                        UserId = admin.UserId,
-                        GroupId = admin.GroupId,
-                        Title = data.Groups[1].Value,
-                        EventDate = ParseDate(data.Groups[2].Value, data.Groups[3].Value),
-                        EventQuota = int.Parse(data.Groups[4].Value)
-                    };
-                    System.Threading.Tasks.Task<Message> MsgId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
-                    poll.MessageId = MsgId.Result.MessageId;
-                    pollId = DBManager.AddPoll(poll);
-                    InlineKeyboardMarkup markup = GetReplyMarkUp(e.Message.Chat.Id, pollId);
-                    telegramBot.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), MsgId.Result.MessageId, GetText(pollId), replyMarkup: markup, parseMode: ParseMode.Html);
+                if (e.Message.Chat.Type != ChatType.Private) {
+                    if (admin != null && e.Message.Chat.Id == admin.GroupId) {
+                        var poll = new Poll() {
+                            UserId = admin.UserId,
+                            GroupId = admin.GroupId,
+                            Title = data.Groups[1].Value,
+                            EventDate = ParseDate(data.Groups[2].Value, data.Groups[3].Value),
+                            EventQuota = int.Parse(data.Groups[4].Value)
+                        };
+                        System.Threading.Tasks.Task<Message> MsgId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
+                        poll.MessageId = MsgId.Result.MessageId;
+                        pollId = DBManager.AddPoll(poll);
+                        InlineKeyboardMarkup markup = GetReplyMarkUp(e.Message.Chat.Id, pollId);
+                        telegramBot.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), MsgId.Result.MessageId, GetText(pollId), replyMarkup: markup, parseMode: ParseMode.Html);
 #if DEBUG
-                    var debugPoll = new Poll() {
-                        UserId = e.Message.From.Id,
-                        GroupId = e.Message.Chat.Id,
-                        Title = data.Groups[1].Value,
-                        EventDate = ParseDate(data.Groups[2].Value, data.Groups[3].Value),
-                        EventQuota = int.Parse(data.Groups[4].Value)
-                    };
-                    telegramBot.SendTextMessageAsync(
-                        new ChatId(e.Message.Chat.Id),
-                        string.Format("TITLE {0}\nUserID {1}\nGroupID {2}\nDATETIME {3}\nQUOTA {4}", debugPoll.Title, debugPoll.UserId, debugPoll.GroupId, debugPoll.EventDate, debugPoll.EventQuota));
+                        var debugPoll = new Poll() {
+                            UserId = e.Message.From.Id,
+                            GroupId = e.Message.Chat.Id,
+                            Title = data.Groups[1].Value,
+                            EventDate = ParseDate(data.Groups[2].Value, data.Groups[3].Value),
+                            EventQuota = int.Parse(data.Groups[4].Value)
+                        };
+                        telegramBot.SendTextMessageAsync(
+                            new ChatId(e.Message.Chat.Id),
+                            string.Format("TITLE {0}\nUserID {1}\nGroupID {2}\nDATETIME {3}\nQUOTA {4}", debugPoll.Title, debugPoll.UserId, debugPoll.GroupId, debugPoll.EventDate, debugPoll.EventQuota));
 #endif
+                    }
+                } else {
+                    telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Can't create event polls in private chats.");
                 }
             }else if (e.Message.Text.ToLower().StartsWith("/addevent")) {
                 telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Wrong syntax. use: /addevent '<title>' <date> <time> +<minium number of partecipants>");
