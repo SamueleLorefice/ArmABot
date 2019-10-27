@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>ArmA_Bot</RootNamespace>
     <StartupObject>ArmA_Bot.Program</StartupObject>
-    <Version>1.0.1.0</Version>
+    <Version>1.0.1.3</Version>
     <Company>R3D Tech</Company>
     <Authors>RED CODE</Authors>
     <PackageId>ArmABot</PackageId>
@@ -18,6 +18,7 @@
     <RepositoryUrl>https://github.com/SamueleLorefice/ArmABot</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>release1.0.1</PackageTags>
+    <Description>A telegram bot for making group polls for arma 3 coop operations.</Description>
   </PropertyGroup>
 
   <ItemGroup>
