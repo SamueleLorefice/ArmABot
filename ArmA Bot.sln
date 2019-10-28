@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArmABot", "ArmABot.csproj", "{3D0F3797-E5F7-4843-9421-F9017A7838FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnitArmABot", "..\XUnitArmABot\XUnitArmABot.csproj", "{6A4AAB41-F628-4406-A775-7C470CD8510C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnitArmABot", "XUnitArmABot\XUnitArmABot.csproj", "{6A4AAB41-F628-4406-A775-7C470CD8510C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
