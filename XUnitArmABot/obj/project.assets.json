@@ -5558,11 +5558,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\REDCODE\\source\\repos\\XUnitArmABot\\XUnitArmABot.csproj",
+      "projectUniqueName": "C:\\Users\\REDCODE\\source\\repos\\ArmA Bot\\XUnitArmABot\\XUnitArmABot.csproj",
       "projectName": "XUnitArmABot",
-      "projectPath": "C:\\Users\\REDCODE\\source\\repos\\XUnitArmABot\\XUnitArmABot.csproj",
+      "projectPath": "C:\\Users\\REDCODE\\source\\repos\\ArmA Bot\\XUnitArmABot\\XUnitArmABot.csproj",
       "packagesPath": "C:\\Users\\REDCODE\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\REDCODE\\source\\repos\\XUnitArmABot\\obj\\",
+      "outputPath": "C:\\Users\\REDCODE\\source\\repos\\ArmA Bot\\XUnitArmABot\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
