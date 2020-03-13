@@ -7,13 +7,13 @@ using System.Linq;
 
 namespace ArmABot {
 
-    public class DBManager : DbContext, IDatabaseAccess {
-        public DbSet<Admin> AdminsTable { get; set; }
-        public DbSet<Poll> PollsTable { get; set; }
-        public DbSet<Vote> VotesTable { get; set; }
-        public DbSet<User> UsersTable { get; set;}
-        public DbSet<Specialization> SpecializationsTable { get; set; }
-        public DbSet<Grade> GradesTable { get; set; }
+	public class DBManager : DbContext, IDatabaseAccess {
+		public DbSet<Admin> AdminsTable { get; set; }
+		public DbSet<Poll> PollsTable { get; set; }
+		public DbSet<Vote> VotesTable { get; set; }
+		public DbSet<User> UsersTable { get; set; }
+		public DbSet<Specialization> SpecializationsTable { get; set; }
+		public DbSet<Grade> GradesTable { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
 			//MSSQL = "Server=(localdb)\MSSQLLocalDB;Database=ArmAHelperBot;Trusted_Connection=True;"
@@ -115,25 +115,25 @@ namespace ArmABot {
 			SaveChanges();
 		}
 
-        public override int SaveChanges() {
-            try {
-                base.SaveChanges();
-            } catch (MySqlException) {
-                return 1;
-            }
-            return 0;
-        }
+		public override int SaveChanges() {
+			try {
+				base.SaveChanges();
+			} catch (MySqlException) {
+				return 1;
+			}
+			return 0;
+		}
 
-        public void AddSpecialization(string name, int gradeRequirement, int preRequisiteSpec) {
-            throw new NotImplementedException();
-        }
+		public void AddSpecialization(string name, int gradeRequirement, int preRequisiteSpec) {
+			throw new NotImplementedException();
+		}
 
-        public void RemoveSpecialization(int id) {
-            throw new NotImplementedException();
-        }
+		public void RemoveSpecialization(int id) {
+			throw new NotImplementedException();
+		}
 
-        public IEnumerable<Specialization> GetSpecializations() {
-            throw new NotImplementedException();
-        }
-    }
+		public IEnumerable<Specialization> GetSpecializations() {
+			throw new NotImplementedException();
+		}
+	}
 }

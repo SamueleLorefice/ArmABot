@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using ArmABot.DBTables;
+﻿using ArmABot.DBTables;
+using System.Collections.Generic;
 
 namespace ArmABot {
 
@@ -36,15 +36,13 @@ namespace ArmABot {
 
 		IEnumerable<Vote> GetVotesInPollFrom(long userId, int pollId);
 
-        void EditVote(int voteId, EVote choice);
+		void EditVote(int voteId, EVote choice);
 
-        //Specialization section
-        void AddSpecialization(string name, int gradeRequirement, int preRequisiteSpec);
-        
-        void RemoveSpecialization(int id);
+		//Specialization section
+		void AddSpecialization(string name, int gradeRequirement, int preRequisiteSpec);
 
-        IEnumerable<Specialization> GetSpecializations();
+		void RemoveSpecialization(int id);
 
-
-    }
+		IEnumerable<Specialization> GetSpecializations();
+	}
 }

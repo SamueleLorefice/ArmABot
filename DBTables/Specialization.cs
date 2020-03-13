@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace ArmABot.DBTables {
 
-namespace ArmABot.DBTables {
 	public class Specialization {
 		public int Id { get; set; }
 		public string SpecializationName { get; set; }
