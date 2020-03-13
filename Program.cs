@@ -70,6 +70,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             Thread.Sleep(Timeout.Infinite);
         }
 
+        /// <summary>
+        /// Handler for callback from poll button pressed event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void CallbackQueryHandler(object sender, CallbackQueryEventArgs e) {
             var senderId = e.CallbackQuery.From.Id;
             DecodeInlineQuery(e.CallbackQuery.Data, out EVote choice, out var chatId, out var pollId);
@@ -98,6 +103,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             }
         }
 
+        /// <summary>
+        /// Handler for the AddAdmin command
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void AddAdminHandler(object sender, MessageEventArgs e) {
             if (e.Message.Text == null) {
                 return;
@@ -113,6 +123,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             }
         }
 
+        /// <summary>
+        /// Handler for the AddEvent command
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void AddEventHandler(object sender, MessageEventArgs e) {
             if (e.Message.Text == null) {
                 return;
@@ -157,6 +172,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             }
         }
 
+        /// <summary>
+        /// Handler for the GetPolls command
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void GetPollsHandler(object sender, MessageEventArgs e) {
             if (e.Message.Text == null) {
                 return;
@@ -177,6 +197,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             }
         }
 
+        /// <summary>
+        /// Handler for resending polls after the GetPolls command
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void ResendPollHandler(object sender, MessageEventArgs e) {
             if (e.Message.Text == null) {
                 return;
@@ -197,6 +222,11 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             }
         }
 
+        /// <summary>
+        /// Returns the current text for a poll
+        /// </summary>
+        /// <param name="pollId"></param>
+        /// <returns></returns>
         private static string GetText(int pollId) {
             Poll poll = DBManager.GetPoll(pollId);
             bool closed = poll.EventDate < DateTime.Now;
@@ -229,6 +259,12 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             return text;
         }
 
+        /// <summary>
+        /// Returns Inline Keyboards for a poll
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <param name="pollId"></param>
+        /// <returns></returns>
         private static InlineKeyboardMarkup GetReplyMarkUp(long chatId, int pollId) {
             var BtnPresente = new InlineKeyboardButton() { Text = "Presente", CallbackData = string.Format("1 {0} {1}", chatId, pollId) };
             var BtnForse = new InlineKeyboardButton() { Text = "Forse", CallbackData = string.Format("3 {0} {1}", chatId, pollId) };
@@ -246,6 +282,12 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             return new InlineKeyboardMarkup(ReplyKB);
         }
 
+        /// <summary>
+        /// Parses date string converting it to DateTime
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
         private static DateTime ParseDate(string date, string time) {
             var parsedDate = date.Split('/');
             var parsedTime = new string[2] {
@@ -263,6 +305,13 @@ namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quot
             return dateTime;
         }
 
+        /// <summary>
+        /// Decodes Inline query string from poll inline buttons
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="choice"></param>
+        /// <param name="chatId"></param>
+        /// <param name="pollId"></param>
         private static void DecodeInlineQuery(string query, out EVote choice, out long chatId, out int pollId) {
             var split = query.Split(' ');
             choice = (EVote)Enum.Parse(typeof(EVote), split[0]);

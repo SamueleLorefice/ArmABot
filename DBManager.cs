@@ -115,7 +115,7 @@ namespace ArmA_Bot {
         public override int SaveChanges() {
             try {
                 base.SaveChanges();
-            } catch (MySqlException e) {
+            } catch (MySqlException) {
                 return 1;
             }
             return 0;
