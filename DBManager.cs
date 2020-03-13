@@ -7,10 +7,13 @@ using System.Linq;
 
 namespace ArmABot {
 
-	public class DBManager : DbContext, IDatabaseAccess {
-		public DbSet<Admin> AdminTable { get; set; }
-		public DbSet<Poll> PollTable { get; set; }
-		public DbSet<Vote> VoteTable { get; set; }
+    public class DBManager : DbContext, IDatabaseAccess {
+        public DbSet<Admin> AdminsTable { get; set; }
+        public DbSet<Poll> PollsTable { get; set; }
+        public DbSet<Vote> VotesTable { get; set; }
+        public DbSet<User> UsersTable { get; set;}
+        public DbSet<Specialization> SpecializationsTable { get; set; }
+        public DbSet<Grade> GradesTable { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
 			//MSSQL = "Server=(localdb)\MSSQLLocalDB;Database=ArmAHelperBot;Trusted_Connection=True;"
