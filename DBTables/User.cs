@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArmA_Bot.DBTables {
+namespace ArmABot.DBTables {
 	public class User {
 		public int Id { get; set; }
 		public string Name { get; set; }

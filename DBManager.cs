@@ -115,13 +115,25 @@ namespace ArmABot {
 			SaveChanges();
 		}
 
-		public override int SaveChanges() {
-			try {
-				base.SaveChanges();
-			} catch (MySqlException) {
-				return 1;
-			}
-			return 0;
-		}
-	}
+        public override int SaveChanges() {
+            try {
+                base.SaveChanges();
+            } catch (MySqlException) {
+                return 1;
+            }
+            return 0;
+        }
+
+        public void AddSpecialization(string name, int gradeRequirement, int preRequisiteSpec) {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveSpecialization(int id) {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Specialization> GetSpecializations() {
+            throw new NotImplementedException();
+        }
+    }
 }

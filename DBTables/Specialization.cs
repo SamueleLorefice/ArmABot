@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArmA_Bot.DBTables {
+namespace ArmABot.DBTables {
 	public class Specialization {
 		public int Id { get; set; }
 		public string SpecializationName { get; set; }
