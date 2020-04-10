@@ -16,6 +16,7 @@ namespace ArmABot {
 		public DbSet<Grade> GradesTable { get; set; }
 		public DbSet<SpecGradePreReq> SpecsGradePreReqTable { get; set; }
 		public DbSet<SpecPreReq> SpecPreReqsTable { get; set; }
+		public DbSet<UserSpecs> UserSpecsTable { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
 			//MSSQL = "Server=(localdb)\MSSQLLocalDB;Database=ArmAHelperBot;Trusted_Connection=True;"
