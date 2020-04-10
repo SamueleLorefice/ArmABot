@@ -199,6 +199,10 @@ namespace ArmABot {
 			throw new NotImplementedException();
 		}
 
+		public void AssignUpgradeGrade(int userId, int gradeId) {
+			throw new NotImplementedException();
+		}
+
 		#endregion Specializations User Grades
 	}
 }

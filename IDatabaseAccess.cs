@@ -66,5 +66,8 @@ namespace ArmABot {
 		void AddGrade(Grade grade);
 
 		IEnumerable<Grade> GetGrades();
+
+		//Spec Assignment
+		void AssignUpgradeGrade(int userId, int gradeId);
 	}
 }
