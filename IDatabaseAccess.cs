@@ -39,14 +39,16 @@ namespace ArmABot {
 		void EditVote(int voteId, EVote choice);
 
 		//Specialization section
-		void AddSpecialization(string name, int gradeRequirement, int preRequisiteSpec);
+		void AddSpecialization(string name, int gradeRequirement, int[] preRequisiteSpecs);
+
+		void AddPreRequisiteSpec(int specializationId, int preRequisiteId);
 
 		void RemoveSpecialization(int id);
 
 		IEnumerable<Specialization> GetSpecializations(string user);
 
 		//User table
-		void AddUser(User user);
+		public void AddUser(string name, long telegramId, int gradeId = 0, int[] Specializations = null)
 
 		User FindUserFromId(long id);
 
@@ -54,8 +56,16 @@ namespace ArmABot {
 
 		User FindUserFromTelegram(long telegramId);
 
+		IEnumerable<User> GetUsers();
+
 		void RemoveUser(User user);
 
 		void RemoveUser(long id);
+
+		//Grade Table
+		void AddGrade(Grade grade);
+
+		IEnumerable<Grade> GetGrades();
+		
 	}
 }

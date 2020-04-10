@@ -26,6 +26,8 @@ namespace ArmABot {
 			return Database.CanConnect();
 		}
 
+		#region  Admin Poll Vote
+
 		public void AddAdmin(Admin admin) {
 			try {
 				AdminTable.Add(admin);
@@ -125,6 +127,11 @@ namespace ArmABot {
 			return 0;
 		}
 
+		#endregion
+
+		#region Specializations User Grades
+
+		//HACK: this doesn't feel right... We can't have more than 1 prerequisite specialization
 		public void AddSpecialization(string name, int gradeRequirement, int preRequisiteSpec) {
 			throw new NotImplementedException();
 		}
@@ -137,8 +144,17 @@ namespace ArmABot {
 			throw new NotImplementedException();
 		}
 
-		public void AddUser(User user) {
+		public void AddSpecialization(string name, int gradeRequirement, int[] preRequisiteSpecs) {
 			throw new NotImplementedException();
+		}
+
+		public void AddPreRequisiteSpec(int specializationId, int preRequisiteId) {
+			throw new NotImplementedException();
+		}
+		
+		//User Section
+		public void AddUser(string name, long telegramId, int gradeId=0, int[] Specializations=null) {
+			
 		}
 
 		public User FindUserFromId(long id) {
@@ -153,6 +169,10 @@ namespace ArmABot {
 			throw new NotImplementedException();
 		}
 
+		public IEnumerable<User> GetUsers() {
+			throw new NotImplementedException();
+		}
+
 		public void RemoveUser(User user) {
 			throw new NotImplementedException();
 		}
@@ -160,5 +180,15 @@ namespace ArmABot {
 		public void RemoveUser(long id) {
 			throw new NotImplementedException();
 		}
+
+		public void AddGrade(Grade grade) {
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<Grade> GetGrades() {
+			throw new NotImplementedException();
+		}
+
+		#endregion
 	}
 }

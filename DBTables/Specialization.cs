@@ -1,9 +1,9 @@
-﻿namespace ArmABot.DBTables {
+﻿using System.Collections.Generic;
+
+namespace ArmABot.DBTables {
 
 	public class Specialization {
 		public int Id { get; set; }
 		public string SpecializationName { get; set; }
-		public int GradeRequirementId { get; set; }
-		public int PreRequisiteSpecializationId { get; set; }
 	}
 }
