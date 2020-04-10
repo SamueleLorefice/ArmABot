@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace ArmABot.DBTables {
-	public class SpecializationPrerequisite {
+	public class SpecPreReq {
 		public Specialization Specialization { get; set; }
 		public Specialization RequisiteSpec { get; set; }
 	}
