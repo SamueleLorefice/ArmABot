@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ArmABot.DBTables {
+﻿namespace ArmABot.DBTables {
 
 	public class Specialization {
 		public int Id { get; set; }

@@ -50,6 +50,7 @@ namespace ArmABot {
 		//User table
 		public void AddUser(string name, long telegramId, int gradeId = 0, int[] Specializations = null)
 
+
 		User FindUserFromId(long id);
 
 		User FindUserFromName(string name);
@@ -66,6 +67,5 @@ namespace ArmABot {
 		void AddGrade(Grade grade);
 
 		IEnumerable<Grade> GetGrades();
-		
 	}
 }

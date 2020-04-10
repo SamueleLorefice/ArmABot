@@ -27,7 +27,7 @@ namespace ArmABot {
 			return Database.CanConnect();
 		}
 
-		#region  Admin Poll Vote
+		#region Admin Poll Vote
 
 		public void AddAdmin(Admin admin) {
 			try {
@@ -128,22 +128,9 @@ namespace ArmABot {
 			return 0;
 		}
 
-		#endregion
+		#endregion Admin Poll Vote
 
 		#region Specializations User Grades
-
-		//HACK: this doesn't feel right... We can't have more than 1 prerequisite specialization
-		public void AddSpecialization(string name, int gradeRequirement, int preRequisiteSpec) {
-			throw new NotImplementedException();
-		}
-
-		public void RemoveSpecialization(int id) {
-			throw new NotImplementedException();
-		}
-
-		public IEnumerable<Specialization> GetSpecializations(string user) {
-			throw new NotImplementedException();
-		}
 
 		public void AddSpecialization(string name, int gradeRequirement, int[] preRequisiteSpecs) {
 			throw new NotImplementedException();
@@ -152,10 +139,21 @@ namespace ArmABot {
 		public void AddPreRequisiteSpec(int specializationId, int preRequisiteId) {
 			throw new NotImplementedException();
 		}
-		
+
+		public IEnumerable<Specialization> GetSpecializations(string user) {
+			throw new NotImplementedException();
+		}
+
+		public void RemoveSpecialization(int id) {
+			throw new NotImplementedException();
+		}
+
 		//User Section
-		public void AddUser(string name, long telegramId, int gradeId=0, int[] Specializations=null) {
-			
+		public void AddUser(string name, long telegramId, int gradeId = 0, int[] Specializations = null) {
+		}
+
+		public IEnumerable<User> GetUsers() {
+			throw new NotImplementedException();
 		}
 
 		public User FindUserFromId(long id) {
@@ -167,10 +165,6 @@ namespace ArmABot {
 		}
 
 		public User FindUserFromTelegram(long telegramId) {
-			throw new NotImplementedException();
-		}
-
-		public IEnumerable<User> GetUsers() {
 			throw new NotImplementedException();
 		}
 
@@ -190,6 +184,6 @@ namespace ArmABot {
 			throw new NotImplementedException();
 		}
 
-		#endregion
+		#endregion Specializations User Grades
 	}
 }
