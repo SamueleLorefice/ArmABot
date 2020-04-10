@@ -17,6 +17,7 @@ namespace ArmABot {
 		public DbSet<SpecGradePreReq> SpecsGradePreReqTable { get; set; }
 		public DbSet<SpecPreReq> SpecPreReqsTable { get; set; }
 		public DbSet<UserSpecs> UserSpecsTable { get; set; }
+		public DbSet<UserGrade> UserGradeTable { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
 			//MSSQL = "Server=(localdb)\MSSQLLocalDB;Database=ArmAHelperBot;Trusted_Connection=True;"
@@ -200,7 +201,16 @@ namespace ArmABot {
 		}
 
 		public void AssignUpgradeGrade(int userId, int gradeId) {
-			throw new NotImplementedException();
+			var graderow = UserGradeTable.Where(x => x.User.Id == userId).First();
+
+			if (graderow == null)
+				UserGradeTable.Add(new UserGrade {
+					User = UserTable.Where(x => x.Id == userId).First(),
+					Grade = GradesTable.Where(x => x.Id == gradeId).First()
+				});
+			else
+				graderow.Grade = GradesTable.Where(x => x.Id == gradeId)?.First();
+			SaveChanges();
 		}
 
 		#endregion Specializations User Grades
