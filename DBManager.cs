@@ -14,8 +14,8 @@ namespace ArmABot {
 		public DbSet<Vote> VotesTable { get; set; }
 		public DbSet<Specialization> SpecializationsTable { get; set; }
 		public DbSet<Grade> GradesTable { get; set; }
-		public DbSet<SpecGradePreReq> SpecGradePreReqs { get; set; }
-		public DbSet<SpecPreReq> SpecPreReqs { get; set; }
+		public DbSet<SpecGradePreReq> SpecsGradePreReqTable { get; set; }
+		public DbSet<SpecPreReq> SpecPreReqsTable { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
 			//MSSQL = "Server=(localdb)\MSSQLLocalDB;Database=ArmAHelperBot;Trusted_Connection=True;"
@@ -132,12 +132,18 @@ namespace ArmABot {
 
 		#region Specializations User Grades
 
-		public void AddSpecialization(string name, int gradeRequirement, int[] preRequisiteSpecs) {
-			throw new NotImplementedException();
+		public void AddSpecialization(string name) {
+			SpecializationsTable.Add(new Specialization { SpecializationName = name });
+			SaveChanges();
 		}
 
 		public void AddPreRequisiteSpec(int specializationId, int preRequisiteId) {
-			throw new NotImplementedException();
+			var row = new SpecPreReq {
+				RequisiteSpec = SpecializationsTable.Find(preRequisiteId),
+				Specialization = SpecializationsTable.Find(specializationId)
+			};
+			SpecPreReqsTable.Add(row);
+			SaveChanges();
 		}
 
 		public IEnumerable<Specialization> GetSpecializations(string user) {
@@ -149,31 +155,39 @@ namespace ArmABot {
 		}
 
 		//User Section
-		public void AddUser(string name, long telegramId, int gradeId = 0, int[] Specializations = null) {
+		public void AddUser(string name, long telegramId, int gradeId = 0) {
+			var user = new User {
+				Name = name,
+				TelegramId = telegramId,
+				GradeId = gradeId
+			};
+			UserTable.Add(user);
 		}
 
 		public IEnumerable<User> GetUsers() {
-			throw new NotImplementedException();
+			return UserTable.ToList<User>();
 		}
 
 		public User FindUserFromId(long id) {
-			throw new NotImplementedException();
+			return UserTable.Find(id);
 		}
 
 		public User FindUserFromName(string name) {
-			throw new NotImplementedException();
+			return UserTable.Where(x => x.Name == name).First();
 		}
 
 		public User FindUserFromTelegram(long telegramId) {
-			throw new NotImplementedException();
+			return UserTable.Where(x => x.TelegramId == telegramId).First();
 		}
 
 		public void RemoveUser(User user) {
-			throw new NotImplementedException();
+			UserTable.Remove(user);
+			SaveChanges();
 		}
 
 		public void RemoveUser(long id) {
-			throw new NotImplementedException();
+			var usr = UserTable.Find(id);
+			UserTable.Remove(usr);
 		}
 
 		public void AddGrade(Grade grade) {

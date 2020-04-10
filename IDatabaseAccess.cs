@@ -39,7 +39,7 @@ namespace ArmABot {
 		void EditVote(int voteId, EVote choice);
 
 		//Specialization section
-		void AddSpecialization(string name, int gradeRequirement, int[] preRequisiteSpecs);
+		void AddSpecialization(string name);
 
 		void AddPreRequisiteSpec(int specializationId, int preRequisiteId);
 
@@ -48,8 +48,7 @@ namespace ArmABot {
 		IEnumerable<Specialization> GetSpecializations(string user);
 
 		//User table
-		public void AddUser(string name, long telegramId, int gradeId = 0, int[] Specializations = null)
-
+		public void AddUser(string name, long telegramId, int gradeId = 0);
 
 		User FindUserFromId(long id);
 
