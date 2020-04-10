@@ -43,6 +43,19 @@ namespace ArmABot {
 
 		void RemoveSpecialization(int id);
 
-		IEnumerable<Specialization> GetSpecializations();
+		IEnumerable<Specialization> GetSpecializations(string user);
+
+		//User table
+		void AddUser(User user);
+
+		User FindUserFromId(long id);
+
+		User FindUserFromName(string name);
+
+		User FindUserFromTelegram(long telegramId);
+
+		void RemoveUser(User user);
+
+		void RemoveUser(long id);
 	}
 }

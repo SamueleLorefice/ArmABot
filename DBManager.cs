@@ -9,6 +9,7 @@ namespace ArmABot {
 
 	public class DBManager : DbContext, IDatabaseAccess {
 		public DbSet<Admin> AdminsTable { get; set; }
+		public DbSet<User> UserTable { get; set; }
 		public DbSet<Poll> PollsTable { get; set; }
 		public DbSet<Vote> VotesTable { get; set; }
 		public DbSet<User> UsersTable { get; set; }
@@ -132,7 +133,31 @@ namespace ArmABot {
 			throw new NotImplementedException();
 		}
 
-		public IEnumerable<Specialization> GetSpecializations() {
+		public IEnumerable<Specialization> GetSpecializations(string user) {
+			throw new NotImplementedException();
+		}
+
+		public void AddUser(User user) {
+			throw new NotImplementedException();
+		}
+
+		public User FindUserFromId(long id) {
+			throw new NotImplementedException();
+		}
+
+		public User FindUserFromName(string name) {
+			throw new NotImplementedException();
+		}
+
+		public User FindUserFromTelegram(long telegramId) {
+			throw new NotImplementedException();
+		}
+
+		public void RemoveUser(User user) {
+			throw new NotImplementedException();
+		}
+
+		public void RemoveUser(long id) {
 			throw new NotImplementedException();
 		}
 	}
