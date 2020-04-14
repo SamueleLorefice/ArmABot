@@ -104,31 +104,6 @@ namespace ArmABot {
         }
 
         /// <summary>
-        /// Handler for resending polls after the GetPolls command
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void ResendPollHandler(object sender, MessageEventArgs e) {
-            if (e.Message.Text == null) {
-                return;
-            }
-            if (e.Message.Text.Contains("ID")) {
-                var id = int.Parse(Regex.Match(e.Message.Text, @"ID([0-9]+)").Groups[1].Value);
-                System.Threading.Tasks.Task<Message> rmId = botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll.", replyMarkup: new ReplyKeyboardRemove());
-                botClient.DeleteMessageAsync(new ChatId(e.Message.Chat.Id), rmId.Result.MessageId);
-                System.Threading.Tasks.Task<Message> MsgId = botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
-                try {
-                    database.UpdatePollMessageId(id, MsgId.Result.MessageId);
-                    Poll poll = database.GetPoll(id);
-                    InlineKeyboardMarkup markup = GetReplyMarkUp(e.Message.Chat.Id, poll.PollId);
-                    botClient.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), (int)poll.MessageId, GetText(id), replyMarkup: markup, parseMode: ParseMode.Html);
-                } catch (NullReferenceException exc) {
-                    botClient.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), MsgId.Result.MessageId, $"Can't load the poll, reason:\n{exc.Message}");
-                }
-            }
-        }
-
-        /// <summary>
         /// Decodes Inline query string from poll inline buttons
         /// </summary>
         /// <param name="query"></param>
