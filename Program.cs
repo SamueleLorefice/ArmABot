@@ -9,6 +9,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Poll = ArmABot.DBTables.Poll;
+using User = ArmABot.DBTables.User;
 
 namespace ArmABot {
 
