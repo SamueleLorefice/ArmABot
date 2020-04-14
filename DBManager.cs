@@ -188,7 +188,7 @@ namespace ArmABot {
 		}
 
 		public void RemoveUser(long id) {
-			var usr = UserTable.Find(id);
+			User usr = UserTable.Find(id);
 			UserTable.Remove(usr);
 		}
 
@@ -201,7 +201,7 @@ namespace ArmABot {
 		}
 
 		public void AssignUpgradeGrade(int userId, int gradeId) {
-			var graderow = UserGradeTable.Where(x => x.User.Id == userId).First();
+			UserGrade graderow = UserGradeTable.Where(x => x.User.Id == userId).First();
 
 			if (graderow == null)
 				UserGradeTable.Add(new UserGrade {
