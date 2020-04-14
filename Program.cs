@@ -104,31 +104,6 @@ namespace ArmABot {
         }
 
         /// <summary>
-        /// Handler for the GetPolls command
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void GetPollsHandler(object sender, MessageEventArgs e) {
-            if (e.Message.Text == null) {
-                return;
-            }
-            if (e.Message.Text.ToLower().Contains("/polls")) {
-                Admin admin = database.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);
-                if (admin != null) {
-                    Poll[] polls = database.GetPollsBy(admin.UserId, admin.GroupId).ToArray();
-                    var Buttons = new List<List<KeyboardButton>>();
-                    foreach (Poll poll in polls) {
-                        Buttons.Add(new List<KeyboardButton>() { new KeyboardButton($"ID{poll.PollId} {poll.Title}") });
-                    }
-                    var markup = new ReplyKeyboardMarkup(Buttons, oneTimeKeyboard: true) {
-                        Selective = true
-                    };
-                    botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Select a poll", replyToMessageId: e.Message.MessageId, replyMarkup: markup);
-                }
-            }
-        }
-
-        /// <summary>
         /// Handler for resending polls after the GetPolls command
         /// </summary>
         /// <param name="sender"></param>
