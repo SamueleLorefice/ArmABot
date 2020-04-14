@@ -103,27 +103,6 @@ namespace ArmABot {
             }
         }
 
-        [Obsolete]
-        /// <summary>
-        /// Handler for the AddAdmin command
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void AddAdminHandler(object sender, MessageEventArgs e) {
-            if (e.Message.Text == null) {
-                return;
-            }
-            if (e.Message.Text.ToLower().Contains("/addadmin")) {
-                Admin checkAdm = database.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);
-                if (checkAdm == null) {
-                    database.AddAdmin(new Admin { UserId = e.Message.From.Id, GroupId = e.Message.Chat.Id });
-                    botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Added as admin of this chat");
-                } else {
-                    botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "You are already an admin of this chat");
-                }
-            }
-        }
-
         /// <summary>
         /// Handler for the AddEvent command
         /// </summary>

@@ -15,7 +15,7 @@ using Poll = ArmABot.DBTables.Poll;
 using ArmABot;
 
 namespace ArmABot.Commands {
-	public class AddAdmin {
+	public class AddAdmin : ICommand {
         DBManager database;
         TelegramBotClient botClient;
 
