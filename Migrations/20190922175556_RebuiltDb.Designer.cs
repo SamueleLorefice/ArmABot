@@ -19,7 +19,7 @@ namespace ArmABot.Migrations
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("ArmA_Bot.DBTables.Admin", b =>
+            modelBuilder.Entity("ArmABot.DBTables.Admin", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -33,7 +33,7 @@ namespace ArmABot.Migrations
                     b.ToTable("AdminTable");
                 });
 
-            modelBuilder.Entity("ArmA_Bot.DBTables.Poll", b =>
+            modelBuilder.Entity("ArmABot.DBTables.Poll", b =>
                 {
                     b.Property<int>("PollId")
                         .ValueGeneratedOnAdd();
@@ -55,7 +55,7 @@ namespace ArmABot.Migrations
                     b.ToTable("PollTable");
                 });
 
-            modelBuilder.Entity("ArmA_Bot.DBTables.Vote", b =>
+            modelBuilder.Entity("ArmABot.DBTables.Vote", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();

@@ -58,12 +58,12 @@ namespace ArmABot {
             Console.WriteLine($"Database connection = {database.TestConnection()}");
             Console.WriteLine("Initializing bot...");
             botClient = new TelegramBotClient(token);
-            Console.WriteLine("Registering Callbacks...");
+            Console.WriteLine("Registering Callbacks...");/*
             botClient.OnMessage += AddEventHandler;
             botClient.OnMessage += AddAdminHandler;
             botClient.OnMessage += GetPollsHandler;
             botClient.OnMessage += ResendPollHandler;
-            botClient.OnCallbackQuery += CallbackQueryHandler;
+            botClient.OnCallbackQuery += CallbackQueryHandler;*/
             Console.WriteLine("Starting Bot...");
             botClient.StartReceiving(new UpdateType[] { UpdateType.CallbackQuery, UpdateType.Message });
             Console.WriteLine("All fine, bot running...");
