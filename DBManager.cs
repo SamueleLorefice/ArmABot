@@ -149,11 +149,15 @@ namespace ArmABot {
 		}
 
 		public IEnumerable<Specialization> GetSpecializations(string user) {
-			throw new NotImplementedException();
+			return SpecializationsTable;
 		}
 
 		public void RemoveSpecialization(int id) {
-			throw new NotImplementedException();
+			var spec = SpecializationsTable.Find(id);
+			if (spec != null) {
+				SpecializationsTable.Remove(spec);
+				SaveChanges();
+			}
 		}
 
 		//User Section
@@ -167,7 +171,7 @@ namespace ArmABot {
 		}
 
 		public IEnumerable<User> GetUsers() {
-			return UserTable.ToList<User>();
+			return UserTable;
 		}
 
 		public User FindUserFromId(long id) {
@@ -193,11 +197,12 @@ namespace ArmABot {
 		}
 
 		public void AddGrade(Grade grade) {
-			throw new NotImplementedException();
+			GradesTable.Add(grade);
+			SaveChanges();
 		}
 
 		public IEnumerable<Grade> GetGrades() {
-			throw new NotImplementedException();
+			return GradesTable;
 		}
 
 		public void AssignUpgradeGrade(int userId, int gradeId) {
