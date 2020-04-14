@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,19 +53,19 @@ namespace ArmABot {
             }
             Console.WriteLine("ArmA Helper Bot V{0}", Assembly.GetExecutingAssembly().GetName().Version);
             Console.WriteLine("Initializing Database Manager...");
-            DBManager = new DBManager();
+            database = new DBManager();
             //TODO: handle an eventual down database situation
-            Console.WriteLine($"Database connection = {DBManager.TestConnection()}");
+            Console.WriteLine($"Database connection = {database.TestConnection()}");
             Console.WriteLine("Initializing bot...");
-            telegramBot = new TelegramBotClient(token);
+            botClient = new TelegramBotClient(token);
             Console.WriteLine("Registering Callbacks...");
-            telegramBot.OnMessage += AddEventHandler;
-            telegramBot.OnMessage += AddAdminHandler;
-            telegramBot.OnMessage += GetPollsHandler;
-            telegramBot.OnMessage += ResendPollHandler;
-            telegramBot.OnCallbackQuery += CallbackQueryHandler;
+            botClient.OnMessage += AddEventHandler;
+            botClient.OnMessage += AddAdminHandler;
+            botClient.OnMessage += GetPollsHandler;
+            botClient.OnMessage += ResendPollHandler;
+            botClient.OnCallbackQuery += CallbackQueryHandler;
             Console.WriteLine("Starting Bot...");
-            telegramBot.StartReceiving(new UpdateType[] { UpdateType.CallbackQuery, UpdateType.Message });
+            botClient.StartReceiving(new UpdateType[] { UpdateType.CallbackQuery, UpdateType.Message });
             Console.WriteLine("All fine, bot running...");
             Thread.Sleep(Timeout.Infinite);
         }
@@ -78,21 +78,21 @@ namespace ArmABot {
         private static void CallbackQueryHandler(object sender, CallbackQueryEventArgs e) {
             var senderId = e.CallbackQuery.From.Id;
             DecodeInlineQuery(e.CallbackQuery.Data, out EVote choice, out var chatId, out var pollId);
-            Poll poll = DBManager.GetPoll(pollId);
-            var votes = DBManager.GetVotesInPollFrom(senderId, pollId).ToList();
+            Poll poll = database.GetPoll(pollId);
+            var votes = database.GetVotesInPollFrom(senderId, pollId).ToList();
             if (poll.EventDate < DateTime.Now) {
-                telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Questo poll è chiuso");
-                telegramBot.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: null, parseMode: ParseMode.Html);
+                botClient.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Questo poll è chiuso");
+                botClient.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: null, parseMode: ParseMode.Html);
             } else {
                 if (votes.Count == 1) {
                     var id = votes[0].Id;
-                    DBManager.EditVote(id, choice);
-                    telegramBot.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
-                    telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato modificato");
+                    database.EditVote(id, choice);
+                    botClient.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
+                    botClient.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato modificato");
                 } else if (votes.Count == 0 || votes == null) {
-                    DBManager.AddVote(choice, pollId, senderId, e.CallbackQuery.From.FirstName);
-                    telegramBot.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
-                    telegramBot.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato aggiunto");
+                    database.AddVote(choice, pollId, senderId, e.CallbackQuery.From.FirstName);
+                    botClient.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
+                    botClient.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato aggiunto");
                 } else {
                     Console.WriteLine("DATABASE ERROR. Run with debug build to see more informations...");
 #if DEBUG
@@ -103,6 +103,7 @@ namespace ArmABot {
             }
         }
 
+        [Obsolete]
         /// <summary>
         /// Handler for the AddAdmin command
         /// </summary>
@@ -113,12 +114,12 @@ namespace ArmABot {
                 return;
             }
             if (e.Message.Text.ToLower().Contains("/addadmin")) {
-                Admin checkAdm = DBManager.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);
+                Admin checkAdm = database.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);
                 if (checkAdm == null) {
-                    DBManager.AddAdmin(new Admin { UserId = e.Message.From.Id, GroupId = e.Message.Chat.Id });
-                    telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Added as admin of this chat");
+                    database.AddAdmin(new Admin { UserId = e.Message.From.Id, GroupId = e.Message.Chat.Id });
+                    botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Added as admin of this chat");
                 } else {
-                    telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "You are already an admin of this chat");
+                    botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "You are already an admin of this chat");
                 }
             }
         }
@@ -135,7 +136,7 @@ namespace ArmABot {
             //DATA Groups: 0 = Original message, 1 = Text, 2 = date, 3 = time, 4 = quota
             if (Regex.IsMatch(e.Message.Text, @"\/addevent[\S]* '([\s\S]*)' ([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)", RegexOptions.IgnoreCase)) {
                 var data = Regex.Match(e.Message.Text, @"\/addevent[\S]* '([\s\S]*)' ([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)", RegexOptions.IgnoreCase);
-                Admin admin = DBManager.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);//checks if the user that has sent the command is an admin of that group
+                Admin admin = database.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);//checks if the user that has sent the command is an admin of that group
                 int pollId;
                 if (e.Message.Chat.Type != ChatType.Private) {
                     if (admin != null && e.Message.Chat.Id == admin.GroupId) {
@@ -146,11 +147,11 @@ namespace ArmABot {
                             EventDate = ParseDate(data.Groups[2].Value, data.Groups[3].Value),
                             EventQuota = int.Parse(data.Groups[4].Value)
                         };
-                        System.Threading.Tasks.Task<Message> MsgId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
+                        System.Threading.Tasks.Task<Message> MsgId = botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
                         poll.MessageId = MsgId.Result.MessageId;
-                        pollId = DBManager.AddPoll(poll);
+                        pollId = database.AddPoll(poll);
                         InlineKeyboardMarkup markup = GetReplyMarkUp(e.Message.Chat.Id, pollId);
-                        telegramBot.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), MsgId.Result.MessageId, GetText(pollId), replyMarkup: markup, parseMode: ParseMode.Html);
+                        botClient.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), MsgId.Result.MessageId, GetText(pollId), replyMarkup: markup, parseMode: ParseMode.Html);
 #if DEBUG
                         var debugPoll = new Poll() {
                             UserId = e.Message.From.Id,
@@ -159,16 +160,16 @@ namespace ArmABot {
                             EventDate = ParseDate(data.Groups[2].Value, data.Groups[3].Value),
                             EventQuota = int.Parse(data.Groups[4].Value)
                         };
-                        telegramBot.SendTextMessageAsync(
+                        botClient.SendTextMessageAsync(
                             new ChatId(e.Message.Chat.Id),
                             string.Format("TITLE {0}\nUserID {1}\nGroupID {2}\nDATETIME {3}\nQUOTA {4}", debugPoll.Title, debugPoll.UserId, debugPoll.GroupId, debugPoll.EventDate, debugPoll.EventQuota));
 #endif
                     }
                 } else {
-                    telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Can't create event polls in private chats.");
+                    botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Can't create event polls in private chats.");
                 }
             }else if (e.Message.Text.ToLower().StartsWith("/addevent")) {
-                telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Wrong syntax. use: /addevent '<title>' <date> <time> +<minium number of partecipants>");
+                botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Wrong syntax. use: /addevent '<title>' <date> <time> +<minium number of partecipants>");
             }
         }
 
@@ -182,9 +183,9 @@ namespace ArmABot {
                 return;
             }
             if (e.Message.Text.ToLower().Contains("/polls")) {
-                Admin admin = DBManager.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);
+                Admin admin = database.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);
                 if (admin != null) {
-                    Poll[] polls = DBManager.GetPollsBy(admin.UserId, admin.GroupId).ToArray();
+                    Poll[] polls = database.GetPollsBy(admin.UserId, admin.GroupId).ToArray();
                     var Buttons = new List<List<KeyboardButton>>();
                     foreach (Poll poll in polls) {
                         Buttons.Add(new List<KeyboardButton>() { new KeyboardButton($"ID{poll.PollId} {poll.Title}") });
@@ -192,7 +193,7 @@ namespace ArmABot {
                     var markup = new ReplyKeyboardMarkup(Buttons, oneTimeKeyboard: true) {
                         Selective = true
                     };
-                    telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Select a poll", replyToMessageId: e.Message.MessageId, replyMarkup: markup);
+                    botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Select a poll", replyToMessageId: e.Message.MessageId, replyMarkup: markup);
                 }
             }
         }
@@ -208,16 +209,16 @@ namespace ArmABot {
             }
             if (e.Message.Text.Contains("ID")) {
                 var id = int.Parse(Regex.Match(e.Message.Text, @"ID([0-9]+)").Groups[1].Value);
-                System.Threading.Tasks.Task<Message> rmId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll.", replyMarkup: new ReplyKeyboardRemove());
-                telegramBot.DeleteMessageAsync(new ChatId(e.Message.Chat.Id), rmId.Result.MessageId);
-                System.Threading.Tasks.Task<Message> MsgId = telegramBot.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
+                System.Threading.Tasks.Task<Message> rmId = botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll.", replyMarkup: new ReplyKeyboardRemove());
+                botClient.DeleteMessageAsync(new ChatId(e.Message.Chat.Id), rmId.Result.MessageId);
+                System.Threading.Tasks.Task<Message> MsgId = botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
                 try {
-                    DBManager.UpdatePollMessageId(id, MsgId.Result.MessageId);
-                    Poll poll = DBManager.GetPoll(id);
+                    database.UpdatePollMessageId(id, MsgId.Result.MessageId);
+                    Poll poll = database.GetPoll(id);
                     InlineKeyboardMarkup markup = GetReplyMarkUp(e.Message.Chat.Id, poll.PollId);
-                    telegramBot.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), (int)poll.MessageId, GetText(id), replyMarkup: markup, parseMode: ParseMode.Html);
+                    botClient.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), (int)poll.MessageId, GetText(id), replyMarkup: markup, parseMode: ParseMode.Html);
                 } catch (NullReferenceException exc) {
-                    telegramBot.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), MsgId.Result.MessageId, $"Can't load the poll, reason:\n{exc.Message}");
+                    botClient.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), MsgId.Result.MessageId, $"Can't load the poll, reason:\n{exc.Message}");
                 }
             }
         }
@@ -228,9 +229,9 @@ namespace ArmABot {
         /// <param name="pollId"></param>
         /// <returns></returns>
         private static string GetText(int pollId) {
-            Poll poll = DBManager.GetPoll(pollId);
+            Poll poll = database.GetPoll(pollId);
             bool closed = poll.EventDate < DateTime.Now;
-            IEnumerable <Vote> votes = DBManager.GetVotesInPoll(pollId);
+            IEnumerable <Vote> votes = database.GetVotesInPoll(pollId);
             Vote[] Present = votes.Where(x => x.Choice == EVote.Present).ToArray();
             Vote[] Maybe = votes.Where(x => x.Choice == EVote.Maybe).ToArray();
             Vote[] Absent = votes.Where(x => x.Choice == EVote.Absent).ToArray();
