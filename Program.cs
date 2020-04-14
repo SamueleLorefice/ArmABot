@@ -55,12 +55,29 @@ namespace ArmABot {
 			Console.WriteLine($"Database connection = {database.TestConnection()}");
 			Console.WriteLine("Initializing bot...");
 			botClient = new TelegramBotClient(token);
-			Console.WriteLine("Registering Callbacks...");/*
-            botClient.OnMessage += AddEventHandler;
-            botClient.OnMessage += AddAdminHandler;
-            botClient.OnMessage += GetPollsHandler;
-            botClient.OnMessage += ResendPollHandler;
-            botClient.OnCallbackQuery += CallbackQueryHandler;*/
+			Console.WriteLine("Registering Callbacks...");
+
+			var commands = new List<ICommand> {
+				new Commands.AddAdmin(),
+				new Commands.AddEvent(),
+				new Commands.GetPolls(),
+				new Commands.ResendPoll()
+			};
+
+			var callbacks = new List<ICallback> {
+				new Commands.CallbackQuery()
+			};
+
+			foreach (ICommand comm in commands) {
+				comm.Setup(database, botClient);
+				botClient.OnMessage += comm.OnMessage;
+			}
+
+			foreach (ICallback query in callbacks) {
+				query.Setup(database, botClient);
+				botClient.OnCallbackQuery += query.OnCallback;
+			}
+
 			Console.WriteLine("Starting Bot...");
 			botClient.StartReceiving(new UpdateType[] { UpdateType.CallbackQuery, UpdateType.Message });
 			Console.WriteLine("All fine, bot running...");
