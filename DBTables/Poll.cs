@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ArmA_Bot.DBTables {
+namespace ArmABot.DBTables {
 
     public class Poll {
         public int PollId { get; set; }

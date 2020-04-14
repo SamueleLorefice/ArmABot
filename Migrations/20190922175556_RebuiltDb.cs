@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ArmA_Bot.Migrations {
+namespace ArmABot.Migrations {
 
     public partial class RebuiltDb : Migration {
 

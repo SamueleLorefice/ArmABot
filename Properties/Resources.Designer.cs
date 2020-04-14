@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ArmA_Bot.Properties {
+namespace ArmABot.Properties {
     using System;
     
     

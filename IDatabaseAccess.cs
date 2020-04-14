@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using ArmA_Bot.DBTables;
+using ArmABot.DBTables;
 
-namespace ArmA_Bot {
+namespace ArmABot {
 
     internal interface IDatabaseAccess {
 

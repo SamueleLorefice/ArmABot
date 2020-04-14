@@ -1,4 +1,4 @@
-﻿namespace ArmA_Bot.DBTables {
+﻿namespace ArmABot.DBTables {
 
     public class Admin {
         public int Id { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace ArmA_Bot.DBTables {
+﻿namespace ArmABot.DBTables {
 
     public class Vote {
         public int Id { get; set; }
@@ -9,7 +9,7 @@
     }
 }
 
-namespace ArmA_Bot {
+namespace ArmABot {
 
     public enum EVote {
         Present = 1,

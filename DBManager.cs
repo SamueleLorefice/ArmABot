@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ArmA_Bot.DBTables;
+using ArmABot.DBTables;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 
-namespace ArmA_Bot {
+namespace ArmABot {
 
     public class DBManager : DbContext, IDatabaseAccess {
         public DbSet<Admin> AdminTable { get; set; }

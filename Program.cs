@@ -1,23 +1,23 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
-using ArmA_Bot.DBTables;
+using ArmABot.DBTables;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using Poll = ArmA_Bot.DBTables.Poll;
+using Poll = ArmABot.DBTables.Poll;
 
-namespace ArmA_Bot {//TODO add a timer system to notify peoples if an event quota is reached
+namespace ArmABot {
 
     internal class Program {
-        private static DBManager DBManager;
-        private static TelegramBotClient telegramBot;
+        private static DBManager database;
+        private static TelegramBotClient botClient;
         public static string ConnectionString;
 
         private static void Main(string[] args) {
