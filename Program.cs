@@ -71,46 +71,13 @@ namespace ArmABot {
         }
 
         /// <summary>
-        /// Handler for callback from poll button pressed event
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void CallbackQueryHandler(object sender, CallbackQueryEventArgs e) {
-            var senderId = e.CallbackQuery.From.Id;
-            DecodeInlineQuery(e.CallbackQuery.Data, out EVote choice, out var chatId, out var pollId);
-            Poll poll = database.GetPoll(pollId);
-            var votes = database.GetVotesInPollFrom(senderId, pollId).ToList();
-            if (poll.EventDate < DateTime.Now) {
-                botClient.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Questo poll è chiuso");
-                botClient.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: null, parseMode: ParseMode.Html);
-            } else {
-                if (votes.Count == 1) {
-                    var id = votes[0].Id;
-                    database.EditVote(id, choice);
-                    botClient.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
-                    botClient.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato modificato");
-                } else if (votes.Count == 0 || votes == null) {
-                    database.AddVote(choice, pollId, senderId, e.CallbackQuery.From.FirstName);
-                    botClient.EditMessageTextAsync(new ChatId(chatId), (int)poll.MessageId, GetText(pollId), replyMarkup: GetReplyMarkUp(chatId, pollId), parseMode: ParseMode.Html);
-                    botClient.AnswerCallbackQueryAsync(e.CallbackQuery.Id, text: "Il tuo voto è stato aggiunto");
-                } else {
-                    Console.WriteLine("DATABASE ERROR. Run with debug build to see more informations...");
-#if DEBUG
-                    Console.WriteLine("ERROR: Something is wrong on the DB! There are 2 or more votes from the same user in a poll!");
-                    Console.WriteLine(string.Format(" PollID: {0}\n UserID: {1}", pollId, senderId));
-#endif
-                }
-            }
-        }
-
-        /// <summary>
         /// Decodes Inline query string from poll inline buttons
         /// </summary>
         /// <param name="query"></param>
         /// <param name="choice"></param>
         /// <param name="chatId"></param>
         /// <param name="pollId"></param>
-        private static void DecodeInlineQuery(string query, out EVote choice, out long chatId, out int pollId) {
+        public static void DecodeInlineQuery(string query, out EVote choice, out long chatId, out int pollId) {
             var split = query.Split(' ');
             choice = (EVote)Enum.Parse(typeof(EVote), split[0]);
             chatId = long.Parse(split[1]);
