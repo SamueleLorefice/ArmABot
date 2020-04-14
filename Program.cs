@@ -104,55 +104,6 @@ namespace ArmABot {
         }
 
         /// <summary>
-        /// Handler for the AddEvent command
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void AddEventHandler(object sender, MessageEventArgs e) {
-            if (e.Message.Text == null) {
-                return;
-            }
-            //DATA Groups: 0 = Original message, 1 = Text, 2 = date, 3 = time, 4 = quota
-            if (Regex.IsMatch(e.Message.Text, @"\/addevent[\S]* '([\s\S]*)' ([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)", RegexOptions.IgnoreCase)) {
-                var data = Regex.Match(e.Message.Text, @"\/addevent[\S]* '([\s\S]*)' ([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}) ([0-9]{4}) \+([0-9]*)", RegexOptions.IgnoreCase);
-                Admin admin = database.FindAdmin(e.Message.From.Id, e.Message.Chat.Id);//checks if the user that has sent the command is an admin of that group
-                int pollId;
-                if (e.Message.Chat.Type != ChatType.Private) {
-                    if (admin != null && e.Message.Chat.Id == admin.GroupId) {
-                        var poll = new Poll() {
-                            UserId = admin.UserId,
-                            GroupId = admin.GroupId,
-                            Title = data.Groups[1].Value,
-                            EventDate = ParseDate(data.Groups[2].Value, data.Groups[3].Value),
-                            EventQuota = int.Parse(data.Groups[4].Value)
-                        };
-                        System.Threading.Tasks.Task<Message> MsgId = botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Loading Poll...");
-                        poll.MessageId = MsgId.Result.MessageId;
-                        pollId = database.AddPoll(poll);
-                        InlineKeyboardMarkup markup = GetReplyMarkUp(e.Message.Chat.Id, pollId);
-                        botClient.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), MsgId.Result.MessageId, GetText(pollId), replyMarkup: markup, parseMode: ParseMode.Html);
-#if DEBUG
-                        var debugPoll = new Poll() {
-                            UserId = e.Message.From.Id,
-                            GroupId = e.Message.Chat.Id,
-                            Title = data.Groups[1].Value,
-                            EventDate = ParseDate(data.Groups[2].Value, data.Groups[3].Value),
-                            EventQuota = int.Parse(data.Groups[4].Value)
-                        };
-                        botClient.SendTextMessageAsync(
-                            new ChatId(e.Message.Chat.Id),
-                            string.Format("TITLE {0}\nUserID {1}\nGroupID {2}\nDATETIME {3}\nQUOTA {4}", debugPoll.Title, debugPoll.UserId, debugPoll.GroupId, debugPoll.EventDate, debugPoll.EventQuota));
-#endif
-                    }
-                } else {
-                    botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Can't create event polls in private chats.");
-                }
-            }else if (e.Message.Text.ToLower().StartsWith("/addevent")) {
-                botClient.SendTextMessageAsync(new ChatId(e.Message.Chat.Id), "Wrong syntax. use: /addevent '<title>' <date> <time> +<minium number of partecipants>");
-            }
-        }
-
-        /// <summary>
         /// Handler for the GetPolls command
         /// </summary>
         /// <param name="sender"></param>
@@ -203,14 +154,40 @@ namespace ArmABot {
         }
 
         /// <summary>
-        /// Returns the current text for a poll
+        /// Decodes Inline query string from poll inline buttons
         /// </summary>
+        /// <param name="query"></param>
+        /// <param name="choice"></param>
+        /// <param name="chatId"></param>
         /// <param name="pollId"></param>
-        /// <returns></returns>
-        private static string GetText(int pollId) {
+        private static void DecodeInlineQuery(string query, out EVote choice, out long chatId, out int pollId) {
+            var split = query.Split(' ');
+            choice = (EVote)Enum.Parse(typeof(EVote), split[0]);
+            chatId = long.Parse(split[1]);
+            pollId = int.Parse(split[2]);
+        }
+
+        public static InlineKeyboardMarkup GetReplyMarkUp(long chatId, int pollId) {
+            var BtnPresente = new InlineKeyboardButton() { Text = "Presente", CallbackData = string.Format("1 {0} {1}", chatId, pollId) };
+            var BtnForse = new InlineKeyboardButton() { Text = "Forse", CallbackData = string.Format("3 {0} {1}", chatId, pollId) };
+            var BtnAssente = new InlineKeyboardButton() { Text = "Assente", CallbackData = string.Format("2 {0} {1}", chatId, pollId) };
+
+            var RowPresente = new List<InlineKeyboardButton> { BtnPresente };
+            var RowForse = new List<InlineKeyboardButton> { BtnForse };
+            var RowAssente = new List<InlineKeyboardButton> { BtnAssente };
+
+            var ReplyKB = new List<List<InlineKeyboardButton>> {
+                RowPresente,
+                RowForse,
+                RowAssente
+            };
+            return new InlineKeyboardMarkup(ReplyKB);
+        }
+
+        public static string GetText(int pollId) {
             Poll poll = database.GetPoll(pollId);
             bool closed = poll.EventDate < DateTime.Now;
-            IEnumerable <Vote> votes = database.GetVotesInPoll(pollId);
+            IEnumerable<Vote> votes = database.GetVotesInPoll(pollId);
             Vote[] Present = votes.Where(x => x.Choice == EVote.Present).ToArray();
             Vote[] Maybe = votes.Where(x => x.Choice == EVote.Maybe).ToArray();
             Vote[] Absent = votes.Where(x => x.Choice == EVote.Absent).ToArray();
@@ -237,66 +214,6 @@ namespace ArmABot {
                 text += $"\n<b>Partecipanti: {Present.Length} + ?{Maybe.Length}/{poll.EventQuota} minimi.";
             }
             return text;
-        }
-
-        /// <summary>
-        /// Returns Inline Keyboards for a poll
-        /// </summary>
-        /// <param name="chatId"></param>
-        /// <param name="pollId"></param>
-        /// <returns></returns>
-        private static InlineKeyboardMarkup GetReplyMarkUp(long chatId, int pollId) {
-            var BtnPresente = new InlineKeyboardButton() { Text = "Presente", CallbackData = string.Format("1 {0} {1}", chatId, pollId) };
-            var BtnForse = new InlineKeyboardButton() { Text = "Forse", CallbackData = string.Format("3 {0} {1}", chatId, pollId) };
-            var BtnAssente = new InlineKeyboardButton() { Text = "Assente", CallbackData = string.Format("2 {0} {1}", chatId, pollId) };
-
-            var RowPresente = new List<InlineKeyboardButton> { BtnPresente };
-            var RowForse = new List<InlineKeyboardButton> { BtnForse };
-            var RowAssente = new List<InlineKeyboardButton> { BtnAssente };
-
-            var ReplyKB = new List<List<InlineKeyboardButton>> {
-                RowPresente,
-                RowForse,
-                RowAssente
-            };
-            return new InlineKeyboardMarkup(ReplyKB);
-        }
-
-        /// <summary>
-        /// Parses date string converting it to DateTime
-        /// </summary>
-        /// <param name="date"></param>
-        /// <param name="time"></param>
-        /// <returns></returns>
-        private static DateTime ParseDate(string date, string time) {
-            var parsedDate = date.Split('/');
-            var parsedTime = new string[2] {
-                time[0].ToString() + time[1].ToString(),
-                time[2].ToString() + time[3].ToString()
-            };
-            var dateTime = new DateTime(
-                int.Parse(parsedDate[2]),
-                int.Parse(parsedDate[1]),
-                int.Parse(parsedDate[0]),
-                int.Parse(parsedTime[0]),
-                int.Parse(parsedTime[1]),
-                0
-            );
-            return dateTime;
-        }
-
-        /// <summary>
-        /// Decodes Inline query string from poll inline buttons
-        /// </summary>
-        /// <param name="query"></param>
-        /// <param name="choice"></param>
-        /// <param name="chatId"></param>
-        /// <param name="pollId"></param>
-        private static void DecodeInlineQuery(string query, out EVote choice, out long chatId, out int pollId) {
-            var split = query.Split(' ');
-            choice = (EVote)Enum.Parse(typeof(EVote), split[0]);
-            chatId = long.Parse(split[1]);
-            pollId = int.Parse(split[2]);
         }
     }
 }
