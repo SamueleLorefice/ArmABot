@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace ArmABot.DBTables {
 
-namespace ArmABot.DBTables {
 	public class UserGrade {
 		public int Id { get; set; }
 		public User User { get; set; }
