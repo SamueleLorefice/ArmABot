@@ -34,11 +34,11 @@ namespace ArmABot {
 		public int AddPoll(Poll poll) {
 			PollTable.Add(poll);
 			SaveChanges();
-			return poll.PollId;
+			return poll.Id;
 		}
 
 		public void AddVote(EVote choice, int pollId, long userId, string username) {
-			var vote = new Vote { Choice = choice, UserId = userId, PollId = pollId, Username = username };
+			var vote = new Vote { Choice = choice, UserId = userId, Id = pollId, Username = username };
 			VoteTable.Add(vote);
 			SaveChanges();
 		}
@@ -48,7 +48,7 @@ namespace ArmABot {
 		}
 
 		public Poll GetPoll(int pollId) {
-			return PollTable.Where(x => x.PollId == pollId).FirstOrDefault();
+			return PollTable.Where(x => x.Id == pollId).FirstOrDefault();
 		}
 
 		public IEnumerable<Poll> GetPollsBy(long userId, long groupId) {
@@ -56,11 +56,11 @@ namespace ArmABot {
 		}
 
 		public IEnumerable<Vote> GetVotesInPoll(int pollId) {
-			return VoteTable.Where(x => x.PollId == pollId);
+			return VoteTable.Where(x => x.Id == pollId);
 		}
 
 		public IEnumerable<Vote> GetVotesInPollFrom(long userId, int pollId) {
-			return VoteTable.Where(x => x.PollId == pollId && x.UserId == userId);
+			return VoteTable.Where(x => x.Id == pollId && x.UserId == userId);
 		}
 
 		public void EditVote(int voteId, EVote choice) {
@@ -92,16 +92,16 @@ namespace ArmABot {
 		}
 
 		public void RemovePoll(int pollId) {
-			var polls = PollTable.Where(x => x.PollId == pollId).ToList();
+			var polls = PollTable.Where(x => x.Id == pollId).ToList();
 			PollTable.RemoveRange(polls);
-			var votes = VoteTable.Where(x => x.PollId == pollId).ToList();
+			var votes = VoteTable.Where(x => x.Id == pollId).ToList();
 			VoteTable.RemoveRange(votes);
 			SaveChanges();
 		}
 
 		public void RemovePoll(Poll poll) {
 			PollTable.Remove(poll);
-			var votes = VoteTable.Where(x => x.PollId == poll.PollId).ToList();
+			var votes = VoteTable.Where(x => x.Id == poll.Id).ToList();
 			VoteTable.RemoveRange(votes);
 			SaveChanges();
 		}
