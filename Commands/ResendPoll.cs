@@ -30,7 +30,7 @@ namespace ArmABot.Commands {
 				try {
 					database.UpdatePollMessageId(id, MsgId.Result.MessageId);
 					Poll poll = database.GetPoll(id);
-					InlineKeyboardMarkup markup = Program.GetReplyMarkUp(e.Message.Chat.Id, poll.PollId);
+					InlineKeyboardMarkup markup = Program.GetReplyMarkUp(e.Message.Chat.Id, poll.Id);
 					botClient.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), (int)poll.MessageId, Program.GetText(id), replyMarkup: markup, parseMode: ParseMode.Html);
 				} catch (NullReferenceException exc) {
 					botClient.EditMessageTextAsync(new ChatId(e.Message.Chat.Id), MsgId.Result.MessageId, $"Can't load the poll, reason:\n{exc.Message}");

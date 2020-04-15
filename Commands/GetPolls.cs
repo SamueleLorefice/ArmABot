@@ -28,7 +28,7 @@ namespace ArmABot.Commands {
 					Poll[] polls = database.GetPollsBy(admin.UserId, admin.GroupId).ToArray();
 					var Buttons = new List<List<KeyboardButton>>();
 					foreach (Poll poll in polls) {
-						Buttons.Add(new List<KeyboardButton>() { new KeyboardButton($"ID{poll.PollId} {poll.Title}") });
+						Buttons.Add(new List<KeyboardButton>() { new KeyboardButton($"ID{poll.Id} {poll.Title}") });
 					}
 					var markup = new ReplyKeyboardMarkup(Buttons, oneTimeKeyboard: true) {
 						Selective = true
