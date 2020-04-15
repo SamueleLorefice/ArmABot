@@ -3,18 +3,20 @@ using System;
 using ArmABot;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ArmABot.Migrations
 {
     [DbContext(typeof(DBManager))]
-    partial class DBManagerModelSnapshot : ModelSnapshot
+    [Migration("20200415134038_IntermediateTest")]
+    partial class IntermediateTest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("ArmABot.DBTables.Admin", b =>
@@ -53,7 +55,7 @@ namespace ArmABot.Migrations
 
             modelBuilder.Entity("ArmABot.DBTables.Poll", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PollId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -75,7 +77,7 @@ namespace ArmABot.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("Id");
+                    b.HasKey("PollId");
 
                     b.ToTable("PollsTable");
                 });
