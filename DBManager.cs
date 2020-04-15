@@ -15,7 +15,7 @@ namespace ArmABot {
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
 			//MSSQL = "Server=(localdb)\MSSQLLocalDB;Database=ArmAHelperBot;Trusted_Connection=True;"
 			//MySQL/MAriaDB = "Server=localhost;Database=ArmABot;Uid=root;Pwd=root;"
-			optionsBuilder.UseMySql(@"Server = (localdb)\MSSQLLocalDB; Database = ArmAHelperBot;");
+			optionsBuilder.UseMySql(Program.ConnectionString);
 		}
 
 		public bool TestConnection() {
