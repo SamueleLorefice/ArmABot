@@ -48,7 +48,7 @@ namespace ArmABot {
 		IEnumerable<Specialization> GetSpecializations(string user);
 
 		//User table
-		public void AddUser(string name, long telegramId, int gradeId = 0);
+		public void AddUser(string name, long telegramId, Grade grade = null);
 
 		User FindUserFromId(long id);
 

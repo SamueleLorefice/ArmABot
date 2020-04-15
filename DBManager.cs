@@ -161,11 +161,11 @@ namespace ArmABot {
 		}
 
 		//User Section
-		public void AddUser(string name, long telegramId, int gradeId = 0) {
+		public void AddUser(string name, long telegramId, Grade grade = null) {
 			var user = new User {
 				Name = name,
 				TelegramId = telegramId,
-				GradeId = gradeId
+				Grade = grade
 			};
 			UserTable.Add(user);
 		}
