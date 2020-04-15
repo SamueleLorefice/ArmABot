@@ -33,7 +33,7 @@ namespace ArmABot {
 
 		public void AddAdmin(Admin admin) {
 			try {
-				AdminTable.Add(admin);
+				AdminsTable.Add(admin);
 				SaveChanges();
 			} catch (MySqlException e) when (e.Message == "Field 'Id' doesn't have a default value") {
 				Console.WriteLine("Write to the database is not possible, disable Strict SQL mode");
@@ -41,45 +41,45 @@ namespace ArmABot {
 		}
 
 		public int AddPoll(Poll poll) {
-			PollTable.Add(poll);
+			PollsTable.Add(poll);
 			SaveChanges();
 			return poll.Id;
 		}
 
 		public void AddVote(EVote choice, int pollId, long userId, string username) {
 			var vote = new Vote { Choice = choice, UserId = userId, Id = pollId, Username = username };
-			VoteTable.Add(vote);
+			VotesTable.Add(vote);
 			SaveChanges();
 		}
 
 		public Admin FindAdmin(long userId, long ChatId) {
-			return AdminTable.Where(x => x.UserId == userId && x.GroupId == ChatId).FirstOrDefault();
+			return AdminsTable.Where(x => x.UserId == userId && x.GroupId == ChatId).FirstOrDefault();
 		}
 
 		public Poll GetPoll(int pollId) {
-			return PollTable.Where(x => x.Id == pollId).FirstOrDefault();
+			return PollsTable.Where(x => x.Id == pollId).FirstOrDefault();
 		}
 
 		public IEnumerable<Poll> GetPollsBy(long userId, long groupId) {
-			return PollTable.Where(x => x.UserId == userId && x.GroupId == groupId);
+			return PollsTable.Where(x => x.UserId == userId && x.GroupId == groupId);
 		}
 
 		public IEnumerable<Vote> GetVotesInPoll(int pollId) {
-			return VoteTable.Where(x => x.Id == pollId);
+			return VotesTable.Where(x => x.Id == pollId);
 		}
 
 		public IEnumerable<Vote> GetVotesInPollFrom(long userId, int pollId) {
-			return VoteTable.Where(x => x.Id == pollId && x.UserId == userId);
+			return VotesTable.Where(x => x.Id == pollId && x.UserId == userId);
 		}
 
 		public void EditVote(int voteId, EVote choice) {
-			Vote edit = VoteTable.Find(voteId);
+			Vote edit = VotesTable.Find(voteId);
 			edit.Choice = choice;
 			SaveChanges();
 		}
 
 		public void UpdatePollMessageId(int pollId, long messageId) {
-			Poll edit = PollTable.Find(pollId);
+			Poll edit = PollsTable.Find(pollId);
 			if (edit != null) {
 				edit.MessageId = messageId;
 			} else {
@@ -90,34 +90,34 @@ namespace ArmABot {
 		}
 
 		public void RemoveAdmin(Admin admin) {
-			AdminTable.Remove(admin);
+			AdminsTable.Remove(admin);
 			SaveChanges();
 		}
 
 		public void RemoveAdmin(long Id) {
-			var admin = AdminTable.Where(x => x.UserId == Id).ToList();
-			AdminTable.RemoveRange(admin);
+			var admin = AdminsTable.Where(x => x.UserId == Id).ToList();
+			AdminsTable.RemoveRange(admin);
 			SaveChanges();
 		}
 
 		public void RemovePoll(int pollId) {
-			var polls = PollTable.Where(x => x.Id == pollId).ToList();
-			PollTable.RemoveRange(polls);
-			var votes = VoteTable.Where(x => x.Id == pollId).ToList();
-			VoteTable.RemoveRange(votes);
+			var polls = PollsTable.Where(x => x.Id == pollId).ToList();
+			PollsTable.RemoveRange(polls);
+			var votes = VotesTable.Where(x => x.Id == pollId).ToList();
+			VotesTable.RemoveRange(votes);
 			SaveChanges();
 		}
 
 		public void RemovePoll(Poll poll) {
-			PollTable.Remove(poll);
-			var votes = VoteTable.Where(x => x.Id == poll.Id).ToList();
-			VoteTable.RemoveRange(votes);
+			PollsTable.Remove(poll);
+			var votes = VotesTable.Where(x => x.Id == poll.Id).ToList();
+			VotesTable.RemoveRange(votes);
 			SaveChanges();
 		}
 
 		public void RemoveVote(int id) {
-			Vote vote = VoteTable.Where(x => x.Id == id).First();
-			VoteTable.Remove(vote);
+			Vote vote = VotesTable.Where(x => x.Id == id).First();
+			VotesTable.Remove(vote);
 			SaveChanges();
 		}
 
