@@ -3,8 +3,7 @@
 namespace ArmABot.DBTables {
 
 	public class Poll {
-		public int PollId { get; set; }
-
+		public int Id { get; set; }
 		public long MessageId { get; set; }
 		public long UserId { get; set; } //Creator
 		public long GroupId { get; set; }
