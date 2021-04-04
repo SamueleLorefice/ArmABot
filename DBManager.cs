@@ -1,6 +1,6 @@
 using ArmABot.DBTables;
 using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace ArmABot {
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
 			//MSSQL = "Server=(localdb)\MSSQLLocalDB;Database=ArmAHelperBot;Trusted_Connection=True;"
 			//MySQL/MAriaDB = "Server=localhost;Database=ArmABot;Uid=root;Pwd=root;"
-			optionsBuilder.UseMySql(Program.ConnectionString);
+			optionsBuilder.UseMySql(ServerVersion.AutoDetect(Program.ConnectionString));
 		}
 
 		public bool TestConnection() {
