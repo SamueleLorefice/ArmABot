@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 
 namespace ArmABot {
-
+	//This class was a compatibility layer to support various type of database APIs effortlessly.
+	//Simply creating a class for each database type that implemented all theese functions translated to the database would add support for the database.
+	//This is actually not ideal and needs to be reviewed.
 	internal interface IDatabaseAccess {
 
 		//Admin section

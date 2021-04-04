@@ -115,6 +115,9 @@ namespace ArmABot {
 			return new InlineKeyboardMarkup(ReplyKB);
 		}
 
+		//TODO: This needs to be renamed to something more meaningful. This function "gets text", indeed, but actually generates the updated poll message text.
+		//TODO: This should really be relocated to a separate class or something.
+		//TODO: Start using language strings for an eventual multiple language support.
 		public static string GetText(int pollId) {
 			Poll poll = database.GetPoll(pollId);
 			var closed = poll.EventDate < DateTime.Now;
